@@ -860,9 +860,10 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
    ★ 아이디와 비밀번호를 변경하려면 아래 ACCOUNTS 객체를 수정하세요 ★
    admin: 관리자 계정 (모든 메뉴 접근 가능)
    guest: 게스트 계정 (대시보드 열람만 가능)               */
+/* 비밀번호는 SHA-256 해시값으로 저장 — 원래 비밀번호는 이 파일에 없음 */
 var ACCOUNTS = {
-  'admin': { pw: 'admin2025!', role: 'admin' },
-  'guest': { pw: 'guest2025',  role: 'guest' }
+  'admin': { pw: 'bfeef40817b856c26f72726c841168f09ec41e49c1eedae16ab85298e1010a7f', role: 'admin' },
+  'guest': { pw: '8e6133f9422f1cb76f58c8b6b8e894fddb76104967babf7818b30a02493010ca', role: 'guest' }
 };
 
 function applyRole(role) {
@@ -875,11 +876,19 @@ function applyRole(role) {
     setTimeout(renderMainPage, 100);
 }
 
-function doLogin() {
+async function doLogin() {
   var id = (document.getElementById('pw-id').value || '').trim();
   var pw = document.getElementById('pw-pw').value || '';
   var acc = ACCOUNTS[id];
-  if (acc && acc.pw === pw) {
+  /* 입력 비밀번호를 SHA-256으로 해시 후 비교 */
+  var pwHash = '';
+  try {
+    var encoded = new TextEncoder().encode(pw);
+    var hashBuf = await crypto.subtle.digest('SHA-256', encoded);
+    pwHash = Array.from(new Uint8Array(hashBuf))
+      .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  } catch(e) { pwHash = pw; /* 구형 브라우저 폴백 */ }
+  if (acc && acc.pw === pwHash) {
     sessionStorage.setItem('pw_ok', '1');
     sessionStorage.setItem('role', acc.role);
     applyRole(acc.role);
@@ -1059,7 +1068,7 @@ function doLogout() {
   /* hide admin menus */
   applyRole('guest');
   /* re-bind login events */
-  document.getElementById('pw-btn').addEventListener('click', doLogin);
+  document.getElementById('pw-btn').addEventListener('click', function(){ doLogin(); });
   document.getElementById('pw-pw').addEventListener('keydown', function(ev){ if(ev.key==='Enter') doLogin(); });
   document.getElementById('pw-id').addEventListener('keydown', function(ev){ if(ev.key==='Enter') document.getElementById('pw-pw').focus(); });
   document.getElementById('pw-id').focus();
@@ -1070,7 +1079,7 @@ function initGate() {
     applyRole(sessionStorage.getItem('role') || 'guest');
     return;
   }
-  document.getElementById('pw-btn').addEventListener('click', doLogin);
+  document.getElementById('pw-btn').addEventListener('click', function(){ doLogin(); });
   document.getElementById('pw-pw').addEventListener('keydown', function(ev) {
     if (ev.key === 'Enter') doLogin();
   });
