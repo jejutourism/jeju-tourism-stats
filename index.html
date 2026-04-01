@@ -1,0 +1,2895 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>제주관광 통계 관리 시스템</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#e8f4fd;--card:#fff;--c2:#f0f8ff;--c3:#daeef9;
+  --p:#1251a3;--p2:#1a6fd8;--plt:#dbeafe;
+  --t1:#111827;--t2:#4b5563;--t3:#9ca3af;
+  --bd:#d1d8e4;--bd2:#b0bcd0;
+  --up:#dc2626;--upb:#fef2f2;--upd:#fecaca;
+  --dn:#1d4ed8;--dnb:#eff6ff;--dnd:#bfdbfe;
+  --nc:#6b7280;--ncb:#f9fafb;
+  --wa:#92400e;--wab:#fffbeb;--wad:#fcd34d;
+  --r:12px;--rs:8px;
+  --sh:0 1px 4px rgba(0,0,0,.08);
+  --fn:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0d1117;--card:#161b22;--c2:#1c2128;--c3:#22272e;
+  --p:#4d9de0;--p2:#60a5fa;--plt:#1e3a5f;
+  --t1:#e6edf3;--t2:#8b949e;--t3:#484f58;
+  --bd:#30363d;--bd2:#484f58;
+  --up:#3fb950;--upb:#0a2e1a;--upd:#1f6334;
+  --dn:#f85149;--dnb:#2d0a0a;--dnd:#6b1414;
+  --nc:#8b949e;--ncb:#1c2128;
+  --wa:#fcd34d;--wab:#1c1505;--wad:#78350f;
+}}
+body{font-family:var(--fn);background:var(--bg);color:var(--t1);font-size:16px;line-height:1.5}
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.nav{background:#e8f4fd;border-bottom:1px solid var(--bd);display:flex;align-items:stretch;flex-shrink:0;min-height:50px}
+.brand{display:flex;align-items:center;gap:10px;padding:10px 18px;border-right:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.logout-btn{padding:5px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--t2);font-family:var(--fn);font-size:11px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap;letter-spacing:.2px}
+.logout-btn:hover{background:#fee2e2;border-color:#fca5a5;color:#dc2626}
+.brand-ico{width:32px;height:32px;background:rgba(255,255,255,.13);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.brand-nm{font-size:14px;font-weight:700;color:#1a3a6e;white-space:nowrap}
+.brand-sb{font-size:10px;color:#4b6ea0;margin-top:1px}
+.nav-tabs{display:flex;align-items:stretch;flex:1;padding:0 4px;overflow-x:auto}
+.nt{display:flex;align-items:center;gap:6px;padding:0 15px;border:none;background:transparent;color:rgba(255,255,255,.5);font-family:var(--fn);font-size:13px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;transition:.15s;white-space:nowrap}
+.nt:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.06)}
+.nt.on{color:#fff;border-bottom-color:#4da6ff;background:rgba(255,255,255,.08)}
+.nav-r{display:flex;align-items:center;padding:0 12px;gap:8px;flex-shrink:0}
+.dbb{font-size:10px;color:rgba(255,255,255,.45);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:2px 9px;white-space:nowrap}
+.pg{display:none;flex-direction:column;flex:1;overflow:hidden}
+.pg.on{display:flex}
+.pg-body{flex:1;overflow-y:auto;padding:14px 20px;display:flex;flex-direction:column;gap:12px}
+.dctrl{background:var(--card);border-bottom:1px solid var(--bd);padding:7px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;box-shadow:var(--sh)}
+.stbar{background:var(--card);border-bottom:1px solid var(--bd);flex-shrink:0}
+.strow{display:flex;overflow-x:auto}
+.stb{display:flex;align-items:center;gap:6px;padding:9px 18px;border:none;background:transparent;font-family:var(--fn);font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;border-bottom:3px solid transparent;transition:.15s;white-space:nowrap}
+.stb:hover{color:var(--t1);background:var(--c2)}
+.stb.on{color:var(--p);border-bottom-color:var(--p);font-weight:700}
+.cg{display:flex;align-items:center;gap:5px}
+.cg label{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.ci,.cs{border:1px solid var(--bd);border-radius:6px;padding:5px 8px;font-size:13px;font-family:var(--fn);color:var(--t1);background:var(--c2);outline:none;transition:.15s;cursor:pointer}
+.ci:focus,.cs:focus{border-color:var(--p)}
+input[type=date].ci{width:132px}
+.csep{width:1px;height:18px;background:var(--bd);flex-shrink:0}
+.mode-toggle{display:flex;border:1px solid var(--bd);border-radius:6px;overflow:hidden;flex-shrink:0}
+.mode-btn{padding:5px 11px;border:none;background:transparent;font-family:var(--fn);font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;transition:.15s;white-space:nowrap}
+.mode-btn.on{background:var(--p);color:#fff}
+.mode-btn:hover:not(.on){background:var(--c2)}
+
+.tab-ctrl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;background:var(--c2);border-bottom:1px solid var(--bd)}
+.tc-mode{display:flex;border:1px solid var(--bd);border-radius:6px;overflow:hidden;flex-shrink:0}
+.tc-mode button{padding:4px 10px;border:none;background:transparent;font-family:var(--fn);font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;transition:.15s}
+.tc-mode button.on{background:var(--p);color:#fff}
+.tc-mode button:hover:not(.on){background:var(--c3)}
+.tc-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.tc-date{border:1px solid var(--bd);border-radius:5px;padding:4px 7px;font-size:12px;font-family:var(--fn);color:var(--t1);background:var(--card);outline:none;width:122px;cursor:pointer}
+.tc-date:focus{border-color:var(--p)}
+.tc-sel{border:1px solid var(--bd);border-radius:5px;padding:4px 7px;font-size:12px;font-family:var(--fn);color:var(--t1);background:var(--card);outline:none;cursor:pointer}
+.tc-sel:focus{border-color:var(--p)}
+.tc-sep{width:1px;height:16px;background:var(--bd);flex-shrink:0}
+.tc-pill{display:inline-flex;align-items:center;gap:4px;background:var(--plt);color:var(--p);border:1px solid var(--p);border-radius:10px;padding:2px 8px;font-size:10px;font-weight:600}
+.tc-pill .dv{background:var(--p);color:#fff;border-radius:5px;padding:1px 5px;font-size:9px}
+.rpill{display:inline-flex;align-items:center;gap:5px;background:var(--plt);color:var(--p);border:1px solid var(--p);border-radius:11px;padding:3px 9px;font-size:11px;font-weight:600}
+.rpill .days{background:var(--p);color:#fff;border-radius:7px;padding:1px 5px;font-size:10px}
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh)}
+.ch{padding:11px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px}
+.chl{display:flex;align-items:center;gap:8px}
+.cico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ctit{font-size:13px;font-weight:700}.csub{font-size:11px;color:var(--t3);margin-top:1px}
+.cb{padding:14px 16px}
+.badge-prov{background:#eff6ff;color:#1d4ed8;border:1px solid #93c5fd;border-radius:8px;padding:2px 9px;font-size:11px;font-weight:700}
+.badge-conf{background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:2px 9px;font-size:11px;font-weight:700}
+.badge-crz{background:#eff6ff;color:#1e40af;border:1px solid #93c5fd;border-radius:8px;padding:2px 9px;font-size:11px;font-weight:700}
+@media(prefers-color-scheme:dark){
+  .badge-prov{background:#1e3a5f;color:#93c5fd;border-color:#1e40af}
+  .badge-conf{background:#022c22;color:#6ee7b7;border-color:#065f46}
+  .badge-crz{background:#1e3a5f;color:#93c5fd;border-color:#1e40af}
+}
+.tscr{overflow-x:auto}
+.tbl-top{display:flex;align-items:center;justify-content:flex-end;padding:8px 16px 4px;gap:8px}
+.dl-csv-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:7px;border:1px solid var(--upd);background:var(--upb);color:var(--up);font-size:12px;font-weight:700;font-family:var(--fn);cursor:pointer;transition:.15s}
+.dl-csv-btn:hover{background:var(--up);color:#fff}
+table.ct{width:100%;border-collapse:collapse;min-width:780px;font-size:12px}
+table.ct thead th{padding:7px 10px;text-align:right;background:var(--c2);color:var(--t3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--bd2);white-space:nowrap}
+table.ct thead th.fx{text-align:left;min-width:68px}
+table.ct thead th.yh{text-align:left;min-width:100px}
+table.ct tbody td{padding:6px 10px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap;vertical-align:middle}
+table.ct tbody td.fx{text-align:left;font-weight:700}
+table.ct tbody td.yc{text-align:left;font-size:11px}
+table.ct tbody tr:last-child td{border-bottom:none}
+.rg td{background:var(--c3)!important;border-top:2px solid var(--bd2)!important;border-bottom:1px solid var(--bd2)!important}
+.rg .gn{font-size:11px;font-weight:800;display:flex;align-items:center;gap:6px}
+.rg .gn::before{content:"";width:3px;height:12px;border-radius:2px;display:inline-block}
+.ri .gn::before{background:#1251a3}.rm .gn::before{background:#7c3aed}
+.ry .gn::before{background:#0891b2}.rp_ .gn::before{background:#e07c12}
+.rc td{background:var(--card)}.rp td{background:var(--c2)}.ra td{background:var(--wab)}
+.rd td{background:var(--c3)}.rr td{background:var(--c2)}
+.ylc{color:var(--p);font-weight:700}.ylp{color:var(--t2)}.yla{color:var(--wa)}.yld{color:var(--t3);font-size:11px}
+.nv{font-size:12px;font-weight:700;color:var(--t1)}.nz{color:var(--t3)}
+.bup{display:inline-flex;align-items:center;background:var(--upb);color:var(--up);border:1px solid var(--upd);border-radius:7px;padding:2px 7px;font-size:11px;font-weight:700}
+.bdn{display:inline-flex;align-items:center;background:var(--dnb);color:var(--dn);border:1px solid var(--dnd);border-radius:7px;padding:2px 7px;font-size:11px;font-weight:700}
+.bnc{display:inline-flex;align-items:center;background:var(--ncb);color:var(--nc);border:1px solid var(--bd);border-radius:7px;padding:2px 7px;font-size:11px;font-weight:700}
+.dup{color:var(--up);font-weight:700}.ddn{color:var(--dn);font-weight:700}
+.yct{display:inline-flex;align-items:center;padding:2px 6px;border-radius:8px;font-size:10px;font-weight:700;border:1px solid;margin-left:3px}
+.ycc{background:var(--plt);color:var(--p);border-color:var(--p)}
+.ycp{background:var(--c2);color:var(--t2);border-color:var(--bd2)}
+.yca{background:var(--wab);color:var(--wa);border-color:var(--wad)}
+table.mt{width:100%;border-collapse:collapse;min-width:1000px;font-size:12px}
+table.mt thead th{padding:7px 9px;text-align:right;background:var(--c2);color:var(--t3);font-size:10px;font-weight:700;text-transform:uppercase;border-bottom:2px solid var(--bd2);white-space:nowrap}
+table.mt thead th.mfx{text-align:left;min-width:78px}
+table.mt tbody td{padding:6px 9px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap;vertical-align:middle}
+table.mt tbody td.mfx{text-align:left;font-size:11px;font-weight:700}
+.mrc td{background:var(--card)}.mrp td{background:var(--c2)}.mra td{background:var(--wab)}
+.mrd td{background:var(--c3)}.mrr td{background:var(--c2)}
+.mrg td{background:var(--c3)!important;border-top:2px solid var(--bd2)!important}
+.mrg .mgn{font-size:11px;font-weight:800}
+.chart-area{padding:12px 16px;border-top:1px solid var(--bd)}
+.chart-ctrl{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chart-l{display:flex;flex-direction:column;gap:6px}
+.mtabs,.vtabs{display:flex;gap:4px;flex-wrap:wrap}
+.mt_,.vt{padding:4px 10px;border-radius:13px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid var(--bd);background:transparent;color:var(--t2);font-family:var(--fn);transition:.15s;white-space:nowrap}
+.mt_.on,.vt.on{background:var(--p);border-color:var(--p);color:#fff}
+.vt.on{background:var(--t1);border-color:var(--t1);color:var(--bg)}
+.legrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.legi{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2)}
+.ll{width:16px;height:2.5px;border-radius:2px}.ld{width:16px;height:0;border-top:2.5px dashed;opacity:.6}
+.crrow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:6px}
+.crrow label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.crrow input[type=date]{border:1px solid var(--bd);border-radius:5px;padding:4px 7px;font-size:12px;font-family:var(--fn);color:var(--t1);background:var(--c2);outline:none;width:126px}
+.crrow .sep{color:var(--t3);font-size:11px}
+.crbtn{padding:4px 10px;border-radius:13px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid var(--bd);background:transparent;color:var(--t2);font-family:var(--fn);transition:.15s}
+.crbtn:hover{border-color:var(--p);color:var(--p)}
+.stat-note{font-size:11.5px;font-weight:700;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:7px 12px;margin:0 16px 12px;line-height:1.6}
+.stat-note::before{content:"";margin-right:4px}
+.ch-wrap{position:relative;height:280px;border-radius:var(--rs);overflow:hidden}
+.chart-area{background:var(--card)}
+canvas{display:block;width:100%!important}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+@media(max-width:720px){.fgrid{grid-template-columns:1fr 1fr}}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld label{font-size:11px;font-weight:700;color:var(--t2)}
+.fld-r{display:flex;align-items:center;gap:4px}
+.fld input{width:100%;border:1px solid var(--bd);border-radius:6px;padding:6px 8px;font-size:13px;font-family:var(--fn);color:var(--t1);background:var(--bg);text-align:right;outline:none;transition:.15s}
+.fld input[type=date],.fld input[type=month]{text-align:left}
+.fld input:focus{border-color:var(--p)}
+.unit{font-size:11px;color:var(--t3);min-width:20px;flex-shrink:0}
+.fdiv{grid-column:1/-1;height:1px;background:var(--bd);margin:2px 0}
+.flbl{grid-column:1/-1;font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding-top:2px}
+.admin-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);background:var(--card);flex-shrink:0;overflow-x:auto}
+.atb{display:flex;align-items:center;gap:6px;padding:10px 16px;border:none;background:transparent;font-family:var(--fn);font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;white-space:nowrap}
+.atb:hover{color:var(--t1);background:var(--c2)}
+.atb.on{color:var(--p);border-bottom-color:var(--p);font-weight:700}
+.btn{border:none;border-radius:var(--rs);padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--fn);transition:.15s;white-space:nowrap}
+.bp{background:var(--p);color:#fff}.bp:hover{background:var(--p2)}
+.bs{background:var(--c2);color:var(--t1);border:1px solid var(--bd2)}.bs:hover{border-color:var(--p);color:var(--p)}
+.bd_{background:var(--dnb);color:var(--dn);border:1px solid var(--dnd)}
+.bsm{padding:5px 10px;font-size:12px;border-radius:6px}
+.blg{padding:11px 20px;font-size:14px}
+.rowf{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dtwrap{overflow-x:auto;max-height:420px;overflow-y:auto}
+table.dt{width:100%;border-collapse:collapse;font-size:12px;min-width:840px}
+table.dt th{padding:7px 9px;text-align:right;background:var(--c2);color:var(--t3);font-size:10px;font-weight:700;text-transform:uppercase;border-bottom:2px solid var(--bd2);white-space:nowrap;position:sticky;top:0;z-index:2}
+table.dt th:first-child{text-align:left}
+table.dt td{padding:5px 9px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap}
+table.dt td:first-child{text-align:left;color:var(--p);font-weight:700}
+table.dt tr:hover td{background:var(--c2)}
+.codebox{font-size:11px;color:var(--t2);background:var(--c2);border:1px solid var(--bd);border-radius:6px;padding:8px 11px;font-family:"Courier New",monospace;line-height:1.9;overflow-x:auto;white-space:nowrap}
+textarea{width:100%;border:1px solid var(--bd);border-radius:var(--rs);padding:9px 12px;font-size:12px;font-family:"Courier New",monospace;color:var(--t1);background:var(--bg);resize:vertical;outline:none;line-height:1.7}
+textarea:focus{border-color:var(--p)}
+.tag{display:inline-flex;padding:2px 8px;border-radius:9px;font-size:11px;font-weight:600;border:1px solid}
+.tok_{background:var(--plt);color:var(--p);border-color:var(--p)}
+.tnw{background:var(--c2);color:var(--t3);border-color:var(--bd)}
+#pw-gate{position:fixed;inset:0;background:linear-gradient(135deg,#091929 0%,#102d58 55%,#1a4a8a 100%);display:flex;align-items:center;justify-content:center;z-index:99999}
+.pw-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:44px 40px;width:360px;text-align:center;backdrop-filter:blur(12px)}
+.pw-logo{font-size:42px;margin-bottom:16px}
+.pw-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.3px;margin-bottom:6px}
+.pw-sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:28px;line-height:1.6}
+.pw-input{width:100%;padding:13px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:15px;font-family:var(--fn);outline:none;text-align:center;letter-spacing:.15em;transition:.2s}
+.pw-input::placeholder{color:rgba(255,255,255,.3);letter-spacing:0}
+.pw-input:focus{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.12)}
+.pw-btn{width:100%;margin-top:14px;padding:13px;border-radius:10px;border:none;background:#1a6fd8;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fn);transition:.2s}
+.pw-btn:hover{background:#2280f0}
+.pw-err{margin-top:12px;font-size:13px;color:#f87171;font-weight:600;min-height:20px}
+.pw-hint{margin-top:18px;font-size:11px;color:rgba(255,255,255,.25);line-height:1.6}
+.tw{position:fixed;bottom:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+.toast{pointer-events:all;padding:9px 15px;border-radius:var(--r);font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:tin .2s ease}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tOK{background:var(--upb);color:var(--up);border:1px solid var(--upd)}
+.tERR{background:var(--dnb);color:var(--dn);border:1px solid var(--dnd)}
+.tINF{background:var(--plt);color:var(--p);border:1px solid #bfdbfe}
+
+/* ═══ SEASONAL THEMES ═══ */
+/* Spring: Mar-May  Summer: Jun-Aug  Autumn: Sep-Nov  Winter: Dec-Feb */
+:root {
+  --s-primary:#1251a3;--s-grad1:#0d6e6e;--s-grad2:#1a9e60;--s-accent:#f59e0b;
+  --s-hero1:#0a4a3a;--s-hero2:#1a7a5a;--s-petal:#ffd6e7;
+}
+body.spring  { --s-grad1:#c0392b;--s-grad2:#e91e8c;--s-hero1:#7b2d8b;--s-hero2:#c0392b;--s-accent:#ff69b4;--s-petal:#ffd6e7; }
+body.summer  { --s-grad1:#0077b6;--s-grad2:#00b4d8;--s-hero1:#023e8a;--s-hero2:#0096c7;--s-accent:#06d6a0;--s-petal:#caf0f8; }
+body.autumn  { --s-grad1:#d62828;--s-grad2:#f77f00;--s-hero1:#7a3b00;--s-hero2:#d4622a;--s-accent:#fcbf49;--s-petal:#ffe8cc; }
+body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#1a3a6e;--s-accent:#90e0ef;--s-petal:#dde8f5; }
+
+/* ═══ NAV REDESIGN ═══ */
+.nav-season-override{
+  background:linear-gradient(135deg,var(--s-hero1) 0%,var(--s-hero2) 100%);
+  transition:background .8s ease;
+}
+.main-nav-menu{display:flex;align-items:stretch;flex:1;padding:0 8px;overflow-x:auto}
+.mn{display:flex;align-items:center;gap:5px;padding:0 14px;border:none;background:transparent;
+  color:var(--t2);font-family:var(--fn);font-size:13px;font-weight:500;
+  cursor:pointer;border-bottom:3px solid transparent;transition:.15s;white-space:nowrap}
+.mn:hover{color:var(--t1);background:var(--c3)}
+.mn.on{color:var(--p);border-bottom-color:var(--p);background:var(--plt);font-weight:700}
+.mn .mn-sub{font-size:9px;color:rgba(255,255,255,.45);margin-left:2px;font-weight:400}
+
+/* ═══ MAIN PAGE ═══ */
+.main-pg{flex:1;overflow-y:auto;display:none;flex-direction:column;-webkit-overflow-scrolling:touch}
+.main-pg.on{display:flex}
+
+/* ═══ HERO SEASONAL ═══ */
+.hero-plain{background:linear-gradient(135deg,#1e5fa8 0%,#2d7dd2 60%,#5ba4e5 100%);color:#fff;flex-shrink:0}
+
+
+
+
+.hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:4px}
+.hero-title{font-size:22px;font-weight:800;letter-spacing:-.3px;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.hero-date-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;backdrop-filter:blur(4px);color:#fff;width:fit-content}
+.dot{width:6px;height:6px;border-radius:50%;background:#6ee7b7;animation:pulse 2s infinite;display:inline-block}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* ═══ CATEGORY GRID ═══ */
+.main-cat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0;background:var(--card);border-bottom:1px solid var(--bd);flex-shrink:0}
+@media(max-width:800px){.main-cat-grid{grid-template-columns:repeat(3,1fr)}}
+.cat-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 6px;cursor:pointer;border-right:1px solid rgba(255,255,255,.25);transition:.15s}
+.cat-item:nth-child(1){background:#2e6da4;color:#fff}
+.cat-item:nth-child(2){background:#2e8b57;color:#fff}
+.cat-item:nth-child(3){background:#1a7f9c;color:#fff}
+.cat-item:nth-child(4){background:#5b6abf;color:#fff}
+.cat-item:nth-child(5){background:#c06c1a;color:#fff}
+.cat-item:nth-child(6){background:#367a6e;color:#fff}
+.cat-item:nth-child(7){background:#1e5fa8;color:#fff}
+.cat-item:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.cat-item:last-child{border-right:none}
+.cat-item:hover{background:var(--c2)}
+.cat-item .ci-ico{display:none}
+.cat-item .ci-ttl{font-size:14px;font-weight:900;color:#fff;text-align:center;letter-spacing:-.2px}
+.cat-item .ci-sub{font-size:10px;color:rgba(255,255,255,.85);text-align:center;font-weight:600}
+.cat-item.ci-on{filter:brightness(1.2);outline:2px solid #fff}
+
+/* ═══ MAIN BODY GRID ═══ */
+.main-body-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 16px;align-content:start}
+@media(max-width:750px){.main-body-grid{grid-template-columns:1fr}}
+.main-panel{background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column}
+.mp-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--bd);border-left:4px solid var(--mp-color,var(--p));font-size:12px;font-weight:700;color:var(--t1)}
+.mp-kpi{display:flex;gap:10px;padding:10px 14px 8px;flex-wrap:wrap;border-bottom:1px solid var(--bd)}
+/* new side-by-side layout */
+.mp-body{display:flex;gap:0;min-height:200px}
+.mp-kpi-big{width:210px;flex-shrink:0;padding:14px 16px;display:flex;flex-direction:column;gap:8px;border-right:1px solid var(--bd);position:relative;overflow:hidden}
+.mp-kpi-big .kpi-illust{position:absolute;right:8px;top:8px;transform:none;opacity:1;font-size:28px;line-height:1;pointer-events:none;user-select:none;z-index:0}
+.mp-kpi-big .kfeat{display:flex;flex-direction:column}
+.mp-kpi-big .kfeat-lbl{font-size:12px;font-weight:700;color:var(--t2);letter-spacing:.3px;margin-bottom:4px}
+.mp-kpi-big .kfeat-val{font-size:36px;font-weight:900;color:#1a56db;line-height:1;letter-spacing:-1.5px;display:block}
+.mp-kpi-big .kfeat-unit{font-size:12px;color:var(--t2);margin-left:2px;font-weight:400}
+.mp-kpi-big .kfeat-chg{font-size:16px;font-weight:700;margin-top:4px}
+.mp-kpi-big .kfeat-chg.up{color:#059669}.mp-kpi-big .kfeat-chg.dn{color:#dc3545}.mp-kpi-big .kfeat-chg.nc{color:var(--nc)}
+.mp-kpi-big .kfeat-cmp{font-size:10px;color:var(--t3);margin-top:1px}
+.mp-kpi-big .ksub-row{display:flex;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--bd);padding-top:8px;margin-top:2px}
+.mp-kpi-big .ksub{flex:1;min-width:60px}
+.mp-kpi-big .ksub-lbl{font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase}
+.mp-kpi-big .ksub-val{font-size:16px;font-weight:800;color:var(--t1)}
+.mp-chart-side{flex:1;min-width:0;padding:6px 8px 4px;position:relative;min-height:180px}
+.mp-kpi-item{flex:1;min-width:80px}
+.mp-kpi-lbl{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.mp-kpi-val{font-size:20px;font-weight:800;color:var(--t1);line-height:1}
+.mp-kpi-unit{font-size:10px;font-weight:400;color:var(--t2);margin-left:1px}
+.mp-kpi-chg{font-size:10px;font-weight:700;margin-top:2px}
+.mp-kpi-chg.up{color:var(--up)}.mp-kpi-chg.dn{color:var(--dn)}.mp-kpi-chg.nc{color:var(--nc)}
+.mp-chart-wrap{height:155px;padding:4px 8px 4px;position:relative}
+.mp-chart-side canvas{position:absolute;inset:6px 8px 24px;width:calc(100% - 16px)!important;height:calc(100% - 30px)!important}
+.mp-period{font-size:12px;color:var(--t3);padding:4px 14px 10px;text-align:right}
+
+/* OLD HERO PLACEHOLDER */
+.hero{display:none}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300'%3E%3Cellipse cx='600' cy='320' rx='700' ry='200' fill='rgba(255,255,255,.04)'/%3E%3Cellipse cx='200' cy='250' rx='350' ry='180' fill='rgba(255,255,255,.03)'/%3E%3Cellipse cx='1000' cy='200' rx='300' ry='150' fill='rgba(255,255,255,.03)'/%3E%3C/svg%3E") no-repeat center bottom;
+  background-size:cover;pointer-events:none;
+}
+.season-art{position:absolute;right:32px;top:50%;transform:translateY(-50%);opacity:.18;font-size:120px;line-height:1;pointer-events:none;transition:opacity .5s}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:6px}
+.hero-title{font-size:28px;font-weight:800;letter-spacing:-.5px;line-height:1.25;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:20px}
+.hero-date-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;backdrop-filter:blur(6px)}
+.hero-date-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--s-accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.hero-season-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--s-accent),transparent)}
+
+/* ═══ MAIN KPI CARDS ═══ */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px 0}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+.kpi-card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px 18px;box-shadow:var(--sh);position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kpi-color,var(--p))}
+.kpi-label{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.kpi-val{font-size:26px;font-weight:800;color:var(--t1);line-height:1;letter-spacing:-.5px;margin-bottom:4px}
+.kpi-val .unit{font-size:13px;font-weight:400;color:var(--t2);margin-left:2px}
+.kpi-chg{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700}
+.kpi-chg.up{color:var(--up)}.kpi-chg.dn{color:var(--dn)}.kpi-chg.nc{color:var(--nc)}
+.kpi-cmp{font-size:10px;color:var(--t3);margin-top:2px}
+.kpi-ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:32px;opacity:.12}
+
+/* ═══ SECTION HEADERS ═══ */
+.main-section{padding:16px 20px}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-ttl{font-size:13px;font-weight:800;color:var(--t1);display:flex;align-items:center;gap:7px}
+.sec-ttl::before{content:'';width:4px;height:16px;border-radius:2px;background:var(--p);display:inline-block}
+.sec-more{font-size:11px;color:var(--p);font-weight:600;cursor:pointer;border:none;background:transparent;font-family:var(--fn);padding:4px 8px;border-radius:6px;transition:.15s}
+.sec-more:hover{background:var(--plt)}
+
+/* ═══ SUMMARY TABLE CARDS ═══ */
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.sum-grid{grid-template-columns:1fr}}
+.sum-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden;box-shadow:var(--sh)}
+.sum-card-hdr{padding:10px 14px;background:var(--c2);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.sum-tbl{width:100%;border-collapse:collapse}
+.sum-tbl td{padding:7px 14px;font-size:12px;border-bottom:1px solid var(--bd);color:var(--t1)}
+.sum-tbl td:last-child{text-align:right;font-weight:700}
+.sum-tbl tr:last-child td{border-bottom:none}
+.sum-tbl .sub{color:var(--t3);font-size:11px;padding-left:24px}
+
+/* ═══ SEASON SELECTOR (small badge) ═══ */
+.season-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);cursor:default}
+
+/* ═══ FOOTER ═══ */
+.main-footer{text-align:center;padding:16px;font-size:11px;color:var(--t3);border-top:1px solid var(--bd);margin-top:auto}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div id="app">
+<div id="pw-gate">
+  <div class="pw-box">
+    <div class="pw-logo">&#127965;</div>
+    <div class="pw-title">제주관광 통계 시스템</div>
+    <div class="pw-sub">아이디와 비밀번호로 로그인하세요.<br><small style="color:rgba(255,255,255,.35)">관리자·게스트 계정 사용 가능</small></div>
+    <input class="pw-input" type="text" id="pw-id" placeholder="아이디" style="margin-bottom:8px;letter-spacing:0" autofocus>
+    <input class="pw-input" type="password" id="pw-pw" placeholder="비밀번호">
+    <button class="pw-btn" id="pw-btn">로그인</button>
+    <div class="pw-err" id="pw-err"></div>
+    <div class="pw-hint">&#x1F512; 아이디/비밀번호를 모르시면 관리자에게 문의하세요</div>
+  </div>
+</div>
+<div class="nav">
+  <div class="brand" onclick="gotoMain()" style="cursor:pointer">
+    <div class="brand-ico">&#127965;</div>
+    <div><div class="brand-nm">제주관광 통계</div><div class="brand-sb">통계 관리 시스템</div></div>
+  </div>
+  <div class="main-nav-menu">
+    <button class="mn on" id="nbMain" onclick="gotoMain()">&#127968; 홈</button>
+    <button class="mn" id="nb1" onclick="gotoPage(1)">&#9881;&#65039; 관리자</button>
+    <button class="mn" id="nb2" onclick="gotoPage(2)">&#128451; 데이터관리</button>
+  </div>
+  <div class="nav-r"><span class="dbb" id="dbbg">로딩중</span><button class="logout-btn" onclick="doLogout()" title="로그아웃">&#x1F512; 로그아웃</button></div>
+</div>
+<div class="main-pg on" id="pgMain">
+  <div class="hero-plain" id="heroPlain">
+    <div style="padding:22px 24px 18px">
+      <div class="hero-eyebrow">Jeju Tourism Statistics Dashboard</div>
+      <div class="hero-title">제주특별자치도 관광통계 현황</div>
+      <div class="hero-date-badge" style="margin-top:10px">
+        <span class="dot"></span>
+        <span id="heroDt"></span> 기준&nbsp;|&nbsp;<span id="heroYrComp"></span> 전년 동기 비교
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STAT CATEGORY CARDS -->
+  <div class="main-cat-grid" id="statMenuGrid"></div>
+
+  <!-- KPI + CHARTS: 4 panels -->
+  <div class="main-body-grid">
+    <!-- Panel 0: 관광객 잠정 일일 -->
+    <div class="main-panel">
+      <div class="mp-hdr" style="--mp-color:#1a3a6e">
+        <span>&#128101; 관광객 잠정(일일)</span>
+        <button class="sec-more" onclick="gotoStatMain(0)">상세보기 →</button>
+      </div>
+      <div class="mp-body">
+        <div class="mp-kpi-big" id="kpi0"></div>
+        <div class="mp-chart-side"><canvas id="mChart0"></canvas></div>
+      </div>
+      <div class="mp-period" id="mPeriod0"></div>
+    </div>
+    <!-- Panel 1: 관광객 확정 월별 -->
+    <div class="main-panel">
+      <div class="mp-hdr" style="--mp-color:#065f46">
+        <span>&#9989; 관광객 확정(월별)</span>
+        <button class="sec-more" onclick="gotoStatMain(1)">상세보기 →</button>
+      </div>
+      <div class="mp-body">
+        <div class="mp-kpi-big" id="kpi1"></div>
+        <div class="mp-chart-side"><canvas id="mChart1"></canvas></div>
+      </div>
+      <div class="mp-period" id="mPeriod1"></div>
+    </div>
+    <!-- Panel 2: 크루즈 일일 -->
+    <div class="main-panel">
+      <div class="mp-hdr" style="--mp-color:#075985">
+        <span>&#128674; 크루즈 일일통계</span>
+        <button class="sec-more" onclick="gotoStatMain(2)">상세보기 →</button>
+      </div>
+      <div class="mp-body">
+        <div class="mp-kpi-big" id="kpi2"></div>
+        <div class="mp-chart-side"><canvas id="mChart2"></canvas></div>
+      </div>
+      <div class="mp-period" id="mPeriod2"></div>
+    </div>
+    <!-- Panel 3: 항공 -->
+    <div class="main-panel">
+      <div class="mp-hdr" style="--mp-color:#4c1d95">
+        <span>&#9992;&#65039; 국내선 / &#127760; 국제선</span>
+        <button class="sec-more" onclick="gotoStatMain(4)">상세보기 →</button>
+      </div>
+      <div class="mp-body">
+        <div class="mp-kpi-big" id="kpi3"></div>
+        <div class="mp-chart-side"><canvas id="mChart3"></canvas></div>
+      </div>
+      <div class="mp-period" id="mPeriod3"></div>
+    </div>
+  </div>
+
+  <!-- 최근 일일관광동향 요약 -->
+  <div id="trendSummaryCard" style="margin:0 12px 12px;background:var(--card);border-radius:var(--r);border:1px solid var(--bd);overflow:hidden">
+    <div style="background:#1e5fa8;color:#fff;padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-weight:700;font-size:14px">&#128240; 최근 일일관광동향</span>
+      <button onclick="gotoPage(3)" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:var(--fn)">전체보기 →</button>
+    </div>
+    <div id="trendSummaryBody" style="padding:10px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px"></div>
+    <div style="padding:4px 14px 8px;font-size:11px;color:var(--t3)" id="trendSummaryDate"></div>
+  </div>
+  <div class="main-footer" id="mainFooter"></div>
+</div>
+
+
+<div class="pg" id="pg0">
+  <div class="stbar">
+    <div class="strow">
+      <button class="stb on" id="sb0" onclick="gotoStat(0)">&#128101; 관광객 잠정(일일)</button>
+      <button class="stb"    id="sb1" onclick="gotoStat(1)">&#9989; 관광객 확정(월별)</button>
+      <button class="stb"    id="sb2" onclick="gotoStat(2)">&#128674; 크루즈 일일통계</button>
+      <button class="stb"    id="sb3" onclick="gotoStat(3)">&#128674; 크루즈 월별통계</button>
+      <button class="stb"    id="sb4" onclick="gotoStat(4)">&#9992;&#65039; 국내선 항공</button>
+      <button class="stb"    id="sb5" onclick="gotoStat(5)">&#127760; 국제선 항공</button>
+      <button class="stb"    id="sb6" onclick="gotoPage(3)">&#128240; 일일동향</button>
+    </div>
+  </div>
+  <div class="pg-body">
+    <div id="sc0"></div><div id="sc1" style="display:none"></div>
+    <div id="sc2" style="display:none"></div><div id="sc3" style="display:none"></div>
+    <div id="sc4" style="display:none"></div><div id="sc5" style="display:none"></div>
+  </div>
+</div>
+<div class="pg" id="pg3">
+  <div class="stbar">
+    <div class="strow">
+      <button class="stb" onclick="gotoStatMain(0)">&#128101; 관광객 잠정(일일)</button>
+      <button class="stb" onclick="gotoStatMain(1)">&#9989; 관광객 확정(월별)</button>
+      <button class="stb" onclick="gotoStatMain(2)">&#128674; 크루즈 일일통계</button>
+      <button class="stb" onclick="gotoStatMain(3)">&#128674; 크루즈 월별통계</button>
+      <button class="stb" onclick="gotoStatMain(4)">&#9992;&#65039; 국내선 항공</button>
+      <button class="stb" onclick="gotoStatMain(5)">&#127760; 국제선 항공</button>
+      <button class="stb on">&#128240; 일일동향</button>
+    </div>
+    <div class="strow" id="trendDateRow" style="padding:6px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--bd)">
+      <input type="date" id="trendViewDate" class="ci" style="font-size:12px;width:140px" onchange="renderTrendPage()">
+      <span id="trendPeriodLabel" style="font-size:12px;color:var(--t3)"></span>
+    </div>
+  </div>
+  <div class="pg-body" style="padding:16px">
+    <div id="trendViewContent" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div id="trendEmpty" style="text-align:center;padding:60px 20px;color:var(--t3)">
+      <div style="font-size:48px">&#128240;</div>
+      <div style="font-size:15px;margin-top:12px;font-weight:600">해당 날짜의 동향이 없습니다</div>
+      <div style="font-size:13px;margin-top:6px">관리자가 관리자 탭에서 동향을 입력하면 여기에 표시됩니다</div>
+    </div>
+  </div>
+</div>
+<div class="pg" id="pg1">
+  <div class="admin-tabs">
+    <button class="atb on" id="ab0" onclick="gotoAdmin(0)">&#128197; 일일 잠정 입력</button>
+    <button class="atb"    id="ab1" onclick="gotoAdmin(1)">&#128203; 월별 확정 입력 (관광객)</button>
+    <button class="atb"    id="ab2" onclick="gotoAdmin(2)">&#128674; 크루즈 일일 입력</button>
+    <button class="atb" id="ab3" onclick="gotoAdmin(3)" style="display:none">&#128674; 크루즈 월별 입력</button>
+    <button class="atb" id="ab4" onclick="gotoAdmin(4)">&#128240; 일일동향 입력</button>
+  </div>
+  <div class="pg-body">
+    <div id="ac0" >
+      <div class="card">
+        <div class="ch">
+          <div class="chl"><div class="cico" style="background:#fff7ed">&#128197;</div>
+            <div><div class="ctit">일일 잠정통계 입력 (관광객+항공)</div></div>
+          </div>
+          <div class="rowf"><span class="badge-prov">잠정통계</span><span id="es0"></span></div>
+        </div>
+        <div class="cb">
+          <div class="fgrid" style="margin-bottom:12px">
+            <div class="fld" style="grid-column:1/2">
+              <label>입력 날짜</label>
+              <input type="date" id="ed0" onchange="onAdminDateChange(0)">
+            </div>
+            <div style="grid-column:2/-1;display:flex;align-items:flex-end">
+              <span id="emsg0" style="font-size:12px;color:var(--t3)">날짜를 선택하세요</span>
+            </div>
+          </div>
+          <div class="fgrid">
+            <div class="flbl">&#128101; 관광객 현황</div>
+            <div class="fld"><label>총 관광객</label><div class="fld-r"><input type="number" id="f0_t_total" min="0"><span class="unit">명</span></div></div>
+            <div class="fld"><label>내국인</label><div class="fld-r"><input type="number" id="f0_t_domestic" min="0" oninput="autoF(0)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>외국인 합계</label><div class="fld-r"><input type="number" id="f0_t_foreign" min="0"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl">외국인 국적별</div>
+            <div class="fld"><label>중국</label><div class="fld-r"><input type="number" id="f0_t_china" min="0" oninput="autoF(0)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>대만</label><div class="fld-r"><input type="number" id="f0_t_taiwan" min="0" oninput="autoF(0)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>일본</label><div class="fld-r"><input type="number" id="f0_t_japan" min="0" oninput="autoF(0)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>싱가포르</label><div class="fld-r"><input type="number" id="f0_t_singapore" min="0" oninput="autoF(0)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>홍콩</label><div class="fld-r"><input type="number" id="f0_t_hongkong" min="0" oninput="autoF(0)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>기타</label><div class="fld-r"><input type="number" id="f0_t_other" min="0" oninput="autoF(0)"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl">&#9992;&#65039; 국내선</div>
+            <div class="fld"><label>운항편수</label><div class="fld-r"><input type="number" id="f0_d_flights" min="0"><span class="unit">편</span></div></div>
+            <div class="fld"><label>공급석</label><div class="fld-r"><input type="number" id="f0_d_seats" min="0"><span class="unit">석</span></div></div>
+            <div class="fld"><label>탑승률</label><div class="fld-r"><input type="number" id="f0_d_loadfactor" min="0"><span class="unit">%</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl">&#127760; 국제선</div>
+            <div class="fld"><label>운항편수</label><div class="fld-r"><input type="number" id="f0_i_flights" min="0"><span class="unit">편</span></div></div>
+            <div class="fld"><label>공급석</label><div class="fld-r"><input type="number" id="f0_i_seats" min="0"><span class="unit">석</span></div></div>
+            <div class="fld"><label>탑승률</label><div class="fld-r"><input type="number" id="f0_i_loadfactor" min="0"><span class="unit">%</span></div></div>
+
+          </div>
+          <div class="rowf" style="margin-top:14px">
+            <button class="btn bp blg" onclick="saveAdmin(0)">&#128190; 저장</button>
+            <button class="btn bs" onclick="resetAdmin(0)">&#8635; 초기화</button>
+            <button class="btn bd_ bsm" id="del0" style="display:none" onclick="deleteAdmin(0)">삭제</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="ac1" style="display:none">
+      <div class="card">
+        <div class="ch">
+          <div class="chl"><div class="cico" style="background:#ecfdf5">&#128203;</div>
+            <div><div class="ctit">월별 확정통계 입력 (관광객)</div></div>
+          </div>
+          <div class="rowf"><span class="badge-conf">확정통계</span><span id="es1"></span></div>
+        </div>
+        <div class="cb">
+          <div class="fgrid" style="margin-bottom:12px">
+            <div class="fld" style="grid-column:1/2">
+              <label>입력 년월</label>
+              <input type="month" id="ed1" onchange="onAdminDateChange(1)">
+            </div>
+            <div style="grid-column:2/-1;display:flex;align-items:flex-end">
+              <span id="emsg1" style="font-size:12px;color:var(--t3)">년월을 선택하세요</span>
+            </div>
+          </div>
+          <div class="fgrid">
+            <div class="flbl">&#128101; 월별 확정 관광객</div>
+            <div class="fld"><label>총 관광객</label><div class="fld-r"><input type="number" id="f1_t_total" min="0"><span class="unit">명</span></div></div>
+            <div class="fld"><label>내국인</label><div class="fld-r"><input type="number" id="f1_t_domestic" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>외국인 합계</label><div class="fld-r"><input type="number" id="f1_t_foreign" min="0"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl" style="color:var(--t3)">외국인 국적별 (동남아)</div>
+            <div class="fld"><label>중국</label><div class="fld-r"><input type="number" id="f1_t_china" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>대만</label><div class="fld-r"><input type="number" id="f1_t_taiwan" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>일본</label><div class="fld-r"><input type="number" id="f1_t_japan" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>싱가포르</label><div class="fld-r"><input type="number" id="f1_t_singapore" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>홍콩</label><div class="fld-r"><input type="number" id="f1_t_hongkong" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>말레이시아</label><div class="fld-r"><input type="number" id="f1_t_malaysia" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>인도네시아</label><div class="fld-r"><input type="number" id="f1_t_indonesia" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>베트남</label><div class="fld-r"><input type="number" id="f1_t_vietnam" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>태국</label><div class="fld-r"><input type="number" id="f1_t_thailand" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>아시아기타</label><div class="fld-r"><input type="number" id="f1_t_asia_other" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl" style="color:var(--t3)">외국인 국적별 (기타)</div>
+            <div class="fld"><label>미국</label><div class="fld-r"><input type="number" id="f1_t_us" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>서구 기타</label><div class="fld-r"><input type="number" id="f1_t_west_other" min="0" oninput="autoF(1)"><span class="unit">명</span></div></div>
+
+          </div>
+          <div class="rowf" style="margin-top:14px">
+            <button class="btn bp blg" onclick="saveAdmin(1)">&#128190; 저장</button>
+            <button class="btn bs" onclick="resetAdmin(1)">&#8635; 초기화</button>
+            <button class="btn bd_ bsm" id="del1" style="display:none" onclick="deleteAdmin(1)">삭제</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="ac2" style="display:none">
+      <div class="card">
+        <div class="ch">
+          <div class="chl"><div class="cico" style="background:#eff6ff">&#128674;</div>
+            <div><div class="ctit">크루즈 일일 잠정통계 입력</div><div class="csub">항만별 입항선박·탑승객 및 국적별 현황</div></div>
+          </div>
+          <div class="rowf"><span class="badge-crz">크루즈 잠정</span><span id="es2"></span></div>
+        </div>
+        <div class="cb">
+          <div class="fgrid" style="margin-bottom:12px">
+            <div class="fld" style="grid-column:1/2">
+              <label>입력 날짜</label>
+              <input type="date" id="ed2" onchange="onAdminDateChange(2)">
+            </div>
+            <div style="grid-column:2/-1;display:flex;align-items:flex-end">
+              <span id="emsg2" style="font-size:12px;color:var(--t3)">날짜를 선택하세요</span>
+            </div>
+          </div>
+          <!-- 항만별 -->
+          <div class="fgrid">
+            <div class="flbl">&#9973; 제주항</div>
+            <div class="fld"><label>입항 선박수</label><div class="fld-r"><input type="number" id="f2_c_jeju_ships" min="0" oninput="autoFC(2)"><span class="unit">척</span></div></div>
+            <div class="fld"><label>탑승객수</label><div class="fld-r"><input type="number" id="f2_c_jeju_pax" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl">&#9973; 강정항</div>
+            <div class="fld"><label>입항 선박수</label><div class="fld-r"><input type="number" id="f2_c_gang_ships" min="0" oninput="autoFC(2)"><span class="unit">척</span></div></div>
+            <div class="fld"><label>탑승객수</label><div class="fld-r"><input type="number" id="f2_c_gang_pax" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl" style="color:var(--t3)">&#8721; 소계 (자동계산)</div>
+            <div class="fld"><label>소계 선박수</label><div class="fld-r"><input type="number" id="f2_c_total_ships" min="0" style="background:var(--c2)"><span class="unit">척</span></div></div>
+            <div class="fld"><label>소계 탑승객</label><div class="fld-r"><input type="number" id="f2_c_total_pax" min="0" style="background:var(--c2)"><span class="unit">명</span></div></div>
+          </div>
+          <!-- 국적별 탑승객 -->
+          <div class="fdiv" style="margin:10px 0 8px"></div>
+          <div class="flbl" style="margin-bottom:6px">&#127758; 국적별 탑승객 (일계 소계 기준)</div>
+          <div class="fgrid">
+            <div class="fld"><label>내국인</label><div class="fld-r"><input type="number" id="f2_c_domestic" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>외국인(소계)</label><div class="fld-r"><input type="number" id="f2_c_foreign" min="0" style="background:var(--c2)"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="fld"><label>중국</label><div class="fld-r"><input type="number" id="f2_c_china" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>일본</label><div class="fld-r"><input type="number" id="f2_c_japan" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>홍콩</label><div class="fld-r"><input type="number" id="f2_c_hongkong" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>대만</label><div class="fld-r"><input type="number" id="f2_c_taiwan" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>싱가포르</label><div class="fld-r"><input type="number" id="f2_c_singapore" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>말레이시아</label><div class="fld-r"><input type="number" id="f2_c_malaysia" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>인도네시아</label><div class="fld-r"><input type="number" id="f2_c_indonesia" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>베트남</label><div class="fld-r"><input type="number" id="f2_c_vietnam" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>태국</label><div class="fld-r"><input type="number" id="f2_c_thailand" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>미국</label><div class="fld-r"><input type="number" id="f2_c_us" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>유럽</label><div class="fld-r"><input type="number" id="f2_c_europe" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>아메리카</label><div class="fld-r"><input type="number" id="f2_c_america" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>오세아니아</label><div class="fld-r"><input type="number" id="f2_c_oceania" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>아프리카</label><div class="fld-r"><input type="number" id="f2_c_africa" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>아시아기타</label><div class="fld-r"><input type="number" id="f2_c_asia_other" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>서구기타</label><div class="fld-r"><input type="number" id="f2_c_west_other" min="0" oninput="autoFC(2)"><span class="unit">명</span></div></div>
+          </div>
+          <div class="rowf" style="margin-top:14px">
+            <button class="btn bp blg" onclick="saveAdmin(2)">&#128190; 저장</button>
+            <button class="btn bs" onclick="resetAdmin(2)">&#8635; 초기화</button>
+            <button class="btn bd_ bsm" id="del2" style="display:none" onclick="deleteAdmin(2)">삭제</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ac3" style="display:none">
+      <div class="card">
+        <div class="ch">
+          <div class="chl"><div class="cico" style="background:#dcfce7">&#128674;</div>
+            <div><div class="ctit">크루즈 월별 확정통계 입력</div><div class="csub">항만별 + 국적별 탑승객 확정통계</div></div>
+          </div>
+          <div class="rowf"><span class="badge-conf">크루즈 확정</span><span id="es3"></span></div>
+        </div>
+        <div class="cb">
+          <div class="fgrid" style="margin-bottom:12px">
+            <div class="fld" style="grid-column:1/2">
+              <label>입력 년월</label>
+              <input type="month" id="ed3" onchange="onAdminDateChange(3)">
+            </div>
+            <div style="grid-column:2/-1;display:flex;align-items:flex-end">
+              <span id="emsg3" style="font-size:12px;color:var(--t3)">년월을 선택하세요</span>
+            </div>
+          </div>
+          <div class="fgrid">
+            <div class="flbl">&#9973; 제주항</div>
+            <div class="fld"><label>입항 선박수</label><div class="fld-r"><input type="number" id="f3_c_jeju_ships" min="0" oninput="autoFC(3)"><span class="unit">척</span></div></div>
+            <div class="fld"><label>탑승객수</label><div class="fld-r"><input type="number" id="f3_c_jeju_pax" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl">&#9973; 강정항</div>
+            <div class="fld"><label>입항 선박수</label><div class="fld-r"><input type="number" id="f3_c_gang_ships" min="0" oninput="autoFC(3)"><span class="unit">척</span></div></div>
+            <div class="fld"><label>탑승객수</label><div class="fld-r"><input type="number" id="f3_c_gang_pax" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl" style="color:var(--t3)">&#8721; 소계 (자동계산)</div>
+            <div class="fld"><label>소계 선박수</label><div class="fld-r"><input type="number" id="f3_c_total_ships" min="0" style="background:var(--c2)"><span class="unit">척</span></div></div>
+            <div class="fld"><label>소계 탑승객</label><div class="fld-r"><input type="number" id="f3_c_total_pax" min="0" style="background:var(--c2)"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl">&#128101; 탑승객 구분</div>
+            <div class="fld"><label>내국인</label><div class="fld-r"><input type="number" id="f3_c_domestic" min="0"><span class="unit">명</span></div></div>
+            <div class="fld"><label>외국인 합계</label><div class="fld-r"><input type="number" id="f3_c_foreign" min="0"><span class="unit">명</span></div></div>
+            <div class="fdiv"></div>
+            <div class="flbl" style="color:var(--t3)">외국인 국적별</div>
+            <div class="fld"><label>일본</label><div class="fld-r"><input type="number" id="f3_c_japan" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>중국</label><div class="fld-r"><input type="number" id="f3_c_china" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>홍콩</label><div class="fld-r"><input type="number" id="f3_c_hongkong" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>대만</label><div class="fld-r"><input type="number" id="f3_c_taiwan" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>싱가포르</label><div class="fld-r"><input type="number" id="f3_c_singapore" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>말레이시아</label><div class="fld-r"><input type="number" id="f3_c_malaysia" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>인도네시아</label><div class="fld-r"><input type="number" id="f3_c_indonesia" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>베트남</label><div class="fld-r"><input type="number" id="f3_c_vietnam" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>태국</label><div class="fld-r"><input type="number" id="f3_c_thailand" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>미국</label><div class="fld-r"><input type="number" id="f3_c_us" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>유럽</label><div class="fld-r"><input type="number" id="f3_c_europe" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>아메리카</label><div class="fld-r"><input type="number" id="f3_c_america" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>오세아니아</label><div class="fld-r"><input type="number" id="f3_c_oceania" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>아프리카</label><div class="fld-r"><input type="number" id="f3_c_africa" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>아시아권</label><div class="fld-r"><input type="number" id="f3_c_asia_other" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+            <div class="fld"><label>서구권</label><div class="fld-r"><input type="number" id="f3_c_west_other" min="0" oninput="autoFC(3)"><span class="unit">명</span></div></div>
+          </div>
+          <div class="rowf" style="margin-top:14px">
+            <button class="btn bp blg" onclick="saveAdmin(3)">&#128190; 저장</button>
+            <button class="btn bs" onclick="resetAdmin(3)">&#8635; 초기화</button>
+            <button class="btn bd_ bsm" id="del3" style="display:none" onclick="deleteAdmin(3)">삭제</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ac4" style="display:none">
+      <div class="card">
+        <div class="ch">
+          <div class="chl"><div class="cico" style="background:#dbeafe">&#128240;</div>
+            <div><div class="ctit">일일관광동향 입력</div><div class="csub">국내외 관광 관련 주요 동향 일일 현황 입력</div></div>
+          </div>
+          <div class="rowf"><span class="badge-crz">일일동향</span><span id="es4"></span></div>
+        </div>
+        <div class="cb">
+          <div class="fgrid" style="margin-bottom:12px">
+            <div class="fld" style="grid-column:1/2">
+              <label>기준 날짜</label>
+              <input type="date" id="ed4" onchange="onTrendDateChange()">
+            </div>
+            <div style="grid-column:2/-1;display:flex;align-items:flex-end">
+              <span id="emsg4" style="font-size:12px;color:var(--t3)">날짜를 선택하세요</span>
+            </div>
+          </div>
+          <div id="trendInputArea" style="display:flex;flex-direction:column;gap:14px"></div>
+          <div class="rowf" style="margin-top:14px">
+            <button class="btn bp blg" onclick="saveTrend()">&#128190; 저장</button>
+            <button class="btn bs" onclick="resetTrendForm()">&#8635; 초기화</button>
+            <button class="btn bd_ bsm" id="del4" style="display:none" onclick="deleteTrendEntry(document.getElementById('ed4').value)">삭제</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pg" id="pg2">
+  <div class="pg-body">
+    <div class="card" style="margin-bottom:14px">
+      <div class="ch"><div class="chl">
+        <div class="cico" style="background:#ecfdf5">&#9729;</div>
+        <div>
+          <div class="ctit">Supabase 클라우드 연결 설정</div>
+          <div class="csub">아래 2단계를 완료하면 모든 직원이 설정 없이 자동으로 데이터를 볼 수 있습니다</div>
+        </div>
+      </div></div>
+
+      <!-- 현재 상태 표시 -->
+      <div style="padding:10px 16px 8px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd)">
+        <span id="sb-status" style="font-size:13px;font-weight:700;color:var(--t3)">&#9679; 미연결</span>
+        <button class="btn bs bsm" onclick="syncFromSupabase().then(function(){toast('동기화 완료','OK');})">&#8635; 수동 동기화</button>
+        <button class="btn bs bsm" onclick="pushAllToSupabase().then(function(n){toast(n+'개 DB 업로드 완료','OK');syncFromSupabase();})">&#8593; 로컬→클라우드</button>
+      </div>
+
+      <!-- 설정 입력 -->
+      <div style="padding:14px 16px 8px">
+        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:10px">
+          &#9312; Supabase URL / Key 입력 후 연결 테스트
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div>
+            <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Project URL</label>
+            <input id="sb-url-input" type="text" class="ci" style="width:100%;font-size:11px" placeholder="https://xxxxxxxxxxxx.supabase.co">
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--t3);display:block;margin-bottom:3px">Anon (public) Key</label>
+            <input id="sb-key-input" type="password" class="ci" style="width:100%;font-size:11px" placeholder="eyJhbGci...">
+          </div>
+        </div>
+        <button class="btn bp bsm" onclick="doApplySb()">연결 테스트</button>
+      </div>
+
+      <!-- 2단계: 배포용 파일 -->
+      <div style="padding:0 16px 14px">
+        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px">
+          &#9313; 배포용 파일 다운로드 → Netlify 재배포 (직원 공유 적용)
+        </div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:8px;line-height:1.7">
+          연결 테스트 성공 후 이 버튼을 누르면 <b>Supabase 키가 포함된 index.html</b>이 다운로드됩니다.<br>
+          이 파일을 Netlify에 재배포하면 <b>직원들이 접속만 해도 자동으로 데이터가 표시</b>됩니다.<br>
+          <span style="color:#dc2626;font-weight:600">PC가 바뀌어도 재설정 불필요 — 직원은 guest 로그인만 하면 됩니다.</span>
+        </div>
+        <button class="btn bp bsm" style="background:#059669;border-color:#059669" onclick="downloadDeployHtml()">
+          &#11015; 배포용 index.html 다운로드
+        </button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px" id="msummary"></div>
+    <div class="card">
+      <div class="ch">
+        <div class="chl"><div class="cico" style="background:#dcfce7">&#128228;</div>
+          <div><div class="ctit">CSV 내보내기</div><div class="csub">데이터 유형별 내보내기</div></div>
+        </div>
+      </div>
+      <div class="cb" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">&#128197; 일일 잠정 (관광객+항공)</div>
+          <div class="rowf">
+            <input type="date" id="exp0S" class="ci" style="width:120px">
+            <span style="color:var(--t3);font-size:11px">~</span>
+            <input type="date" id="exp0E" class="ci" style="width:120px">
+          </div>
+          <div class="rowf" style="margin-top:8px">
+            <button class="btn bs bsm" onclick="doExport(0,'range')">기간 내보내기</button>
+            <button class="btn bp bsm" onclick="doExport(0,'all')">전체</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">&#128203; 월별 확정 (관광객)</div>
+          <div class="rowf" style="margin-top:30px">
+            <button class="btn bp bsm" onclick="doExport(1,'all')">전체 내보내기</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">&#128674; 크루즈 일일 잠정</div>
+          <div class="rowf">
+            <input type="date" id="exp2S" class="ci" style="width:120px">
+            <span style="color:var(--t3);font-size:11px">~</span>
+            <input type="date" id="exp2E" class="ci" style="width:120px">
+          </div>
+          <div class="rowf" style="margin-top:8px">
+            <button class="btn bs bsm" onclick="doExport(2,'range')">기간 내보내기</button>
+            <button class="btn bp bsm" onclick="doExport(2,'all')">전체</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">&#128674; 크루즈 월별 확정</div>
+          <div class="rowf" style="margin-top:30px">
+            <button class="btn bp bsm" onclick="doExport(3,'all')">전체 내보내기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">
+        <div class="chl"><div class="cico" style="background:#dbeafe">&#128229;</div>
+          <div><div class="ctit">CSV 가져오기</div><div class="csub">데이터 유형 선택 후 파일 선택 또는 붙여넣기</div></div>
+        </div>
+      </div>
+      <div class="cb">
+        <div class="rowf" style="margin-bottom:12px">
+          <label style="font-size:12px;font-weight:700;color:var(--t2)">유형:</label>
+          <select class="cs" id="impType" onchange="updImpHint()">
+            <option value="0">&#128197; 일일 잠정</option>
+            <option value="1">&#128203; 월별 확정(관광객)</option>
+            <option value="2">&#128674; 크루즈 일일</option>
+            <option value="3">&#128674; 크루즈 월별</option>
+            <option value="4">&#9992; 국내항공 (편수&#183;공급석&#183;탑승률)</option>
+            <option value="5">&#127760; 국제항공 (편수&#183;공급석&#183;탑승률)</option>
+          </select>
+          <label class="btn bs bsm" style="cursor:pointer">&#128194; 파일 선택<input type="file" accept=".csv,.txt" style="display:none" onchange="onFileSelect(this)"></label>
+        </div>
+        <div id="impHint" class="codebox" style="margin-bottom:10px;font-size:10px"></div>
+        <textarea id="csvInput" rows="6" placeholder="CSV 내용을 붙여넣으세요..."></textarea>
+        <div class="rowf" style="margin-top:8px">
+          <button class="btn bp bsm" onclick="doImport()">가져오기 실행</button>
+          <button class="btn bs bsm" onclick="document.getElementById('csvInput').value=''">지우기</button>
+          <span id="importMsg" style="font-size:12px"></span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch">
+        <div class="chl"><div class="cico" style="background:#ede9fe">&#128203;</div>
+          <div><div class="ctit">데이터 목록</div><div class="csub" id="listSub">-</div></div>
+        </div>
+        <div class="rowf">
+          <select class="cs" id="listType" onchange="renderList()">
+            <option value="0">일일 잠정</option>
+            <option value="1">월별 확정(관광객)</option>
+            <option value="2">크루즈 일일</option>
+            <option value="3">크루즈 월별</option>
+            <option value="4">국내항공</option>
+            <option value="5">국제항공</option>
+          </select>
+          <input type="text" id="srch" placeholder="검색..." oninput="renderList()" class="ci" style="width:150px">
+          <button class="btn bd_ bsm" onclick="clearData()">선택유형 삭제</button>
+        </div>
+      </div>
+      <div class="dtwrap"><table class="dt"><thead id="listHead"></thead><tbody id="listBody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+</div><!-- #app -->
+<div class="tw" id="tw"></div>
+<script>
+/* ═══ 계정 설정
+   ★ 아이디와 비밀번호를 변경하려면 아래 ACCOUNTS 객체를 수정하세요 ★
+   admin: 관리자 계정 (모든 메뉴 접근 가능)
+   guest: 게스트 계정 (대시보드 열람만 가능)               */
+/* 비밀번호는 SHA-256 해시값으로 저장 — 원래 비밀번호는 이 파일에 없음 */
+var ACCOUNTS = {
+  'admin': { pw: 'bfeef40817b856c26f72726c841168f09ec41e49c1eedae16ab85298e1010a7f', role: 'admin' },
+  'guest': { pw: '8e6133f9422f1cb76f58c8b6b8e894fddb76104967babf7818b30a02493010ca', role: 'guest' }
+};
+
+function applyRole(role) {
+  /* 관리자 전용 탭: nb1(관리자), nb2(데이터관리) */
+  var adminOnly = [document.getElementById('nb1'), document.getElementById('nb2')];
+  adminOnly.forEach(function(el) { if (el) el.style.display = role === 'admin' ? '' : 'none'; });
+  /* nb3(일일동향)은 admin/guest 모두 표시 */
+  var nb3=document.getElementById('nb3'); if(nb3) nb3.style.display='';
+  if(role !== 'admin') gotoMain();
+  else if(document.getElementById('pgMain')&&document.getElementById('pgMain').classList.contains('on'))
+    setTimeout(renderMainPage, 100);
+}
+
+async function doLogin() {
+  var id = (document.getElementById('pw-id').value || '').trim();
+  var pw = document.getElementById('pw-pw').value || '';
+  var acc = ACCOUNTS[id];
+  /* 입력 비밀번호를 SHA-256으로 해시 후 비교 */
+  var pwHash = '';
+  try {
+    var encoded = new TextEncoder().encode(pw);
+    var hashBuf = await crypto.subtle.digest('SHA-256', encoded);
+    pwHash = Array.from(new Uint8Array(hashBuf))
+      .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  } catch(e) { pwHash = pw; /* 구형 브라우저 폴백 */ }
+  if (acc && acc.pw === pwHash) {
+    sessionStorage.setItem('pw_ok', '1');
+    sessionStorage.setItem('role', acc.role);
+    applyRole(acc.role);
+    var g = document.getElementById('pw-gate');
+    g.style.transition = 'opacity .4s'; g.style.opacity = '0';
+    setTimeout(function(){ g.remove(); }, 400);
+  } else {
+    var e = document.getElementById('pw-err');
+    e.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+    document.getElementById('pw-pw').value = '';
+    document.getElementById('pw-pw').focus();
+  }
+}
+/* ── 표 데이터 CSV 다운로드 ── */
+function downloadTableCSV(si) {
+  var cfg = SCFG[si], ts = TS[si];
+  var dbi = cfg.dbi === 'cruise_agg' ? 2 : cfg.dbi;
+  var keys = cfg.keys.filter(function(k){ return !k.isAvg; });
+  var allKeys = cfg.keys;
+  var rows = [], header = [];
+  var cy = cfg.isM ? (ts.monthYr || getCurYear()) : getCurYear();
+  var py = String(ts.compYr || compYr);
+  var ay = ts.useAdd && ts.addYr ? String(ts.addYr) : '';
+
+  if (cfg.isM) {
+    /* 월별: 1~12월 컬럼 */
+    var months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+    header = ['지표', '연도'].concat(months.map(function(m){ return parseInt(m)+'월'; })).concat(['합계/평균']);
+    var gv = dbi === 2 && cfg.dbi === 'cruise_agg' ? getCruiseMonthAgg : function(ym,key){ return getMonthVal(dbi,ym,key); };
+    allKeys.forEach(function(k){
+      function sa(arr){ if(k.isAvg){ var v=arr.filter(function(x){ return x>0; }); return v.length?v.reduce(function(a,b){ return a+b; },0)/v.length:0; } return arr.reduce(function(a,b){ return a+b; },0); }
+      var cv = months.map(function(m){ return gv(cy+'-'+m, k.k); });
+      var pv = months.map(function(m){ return gv(py+'-'+m, k.k); });
+      var av = ay ? months.map(function(m){ return gv(ay+'-'+m, k.k); }) : null;
+      rows.push([k.l, cy+'년'].concat(cv).concat([sa(cv)]));
+      rows.push([k.l, py+'년'].concat(pv).concat([sa(pv)]));
+      if(av) rows.push([k.l, ay+'년'].concat(av).concat([sa(av)]));
+    });
+  } else if (ts.mode === 'range' && ts.rangeS && ts.rangeE && ts.rangeS <= ts.rangeE) {
+    /* 구간: 단일 합계 행 */
+    header = ['구분', '당해('+cy+')', '직전('+py+')'].concat(ay?['추가('+ay+')']:[]).concat(['증감(vs직전)','증감률(vs직전)']);
+    var rp = shiftRngY(ts.rangeS, ts.rangeE, py);
+    var ra = ay ? shiftRngY(ts.rangeS, ts.rangeE, ay) : null;
+    allKeys.forEach(function(k){
+      var cv = getAggDB(dbi, ts.rangeS, ts.rangeE, k.k);
+      var pv = getAggDB(dbi, rp[0], rp[1], k.k);
+      var av = ra ? getAggDB(dbi, ra[0], ra[1], k.k) : null;
+      var diff = cv - pv;
+      var rate = pv ? ((diff/pv)*100).toFixed(1)+'%' : '-';
+      var r = [k.l, cv, pv];
+      if(av !== null) r.push(av);
+      r.push(diff, rate);
+      rows.push(r);
+    });
+  } else {
+    /* 기준일: 일계/월계/누계 */
+    var rd = ts.refDate || today;
+    var m = rd.slice(5,7), d = rd.slice(8,10);
+    header = ['구분', '기간', '당해('+cy+')', '직전('+py+')'].concat(ay?['추가('+ay+')']:[]).concat(['증감(vs직전)','증감률(vs직전)']);
+    [
+      {tp:'day',  lbl:'일계',  note:'('+parseInt(m)+'월'+parseInt(d)+'일)'},
+      {tp:'month',lbl:'월계',  note:'('+parseInt(m)+'/1~'+parseInt(m)+'/'+parseInt(d)+')'},
+      {tp:'year', lbl:'누계',  note:'(1/1~'+parseInt(m)+'/'+parseInt(d)+')'}
+    ].forEach(function(g){
+      allKeys.forEach(function(k){
+        var cv = getValD(dbi, rd, cy, g.tp, k.k);
+        var pv = getValD(dbi, rd, py, g.tp, k.k);
+        var av = ay ? getValD(dbi, rd, ay, g.tp, k.k) : null;
+        var diff = cv - pv;
+        var rate = pv ? ((diff/pv)*100).toFixed(1)+'%' : '-';
+        var r = [g.lbl+g.note, k.l, cv, pv];
+        if(av !== null) r.push(av);
+        r.push(diff, rate);
+        rows.push(r);
+      });
+    });
+  }
+
+  var csvLines = [header.join(',')].concat(rows.map(function(r){
+    return r.map(function(v){ return typeof v==='string'&&v.indexOf(',')>=0?'"'+v+'"':v; }).join(',');
+  }));
+  var blob = new Blob(['\uFEFF'+csvLines.join('\r\n')], {type:'text/csv;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  var period = cfg.isM ? (ts.monthYr||cy)+'년' : (ts.mode==='range'?ts.rangeS+'~'+ts.rangeE:ts.refDate);
+  a.download = '제주관광통계_'+cfg.title+'_'+period+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('CSV 다운로드 완료','OK');
+}
+
+async function doApplySb() {
+  var url=(document.getElementById('sb-url-input').value||'').trim();
+  var key=(document.getElementById('sb-key-input').value||'').trim();
+  var stEl=document.getElementById('sb-status');
+  if(!url||!key){toast('URL과 키를 모두 입력하세요','ERR');return;}
+  if(!url.startsWith('https://')||url.indexOf('supabase.co')<0){toast('올바른 Supabase URL 형식이 아닙니다','ERR');return;}
+  try{localStorage.setItem('sb_url',url);localStorage.setItem('sb_key',key);}catch(e){}
+  SB_URL=url; SB_KEY=key; sbClient=null; sbReady=false;
+  initSupabase();
+  if(!sbReady){
+    if(stEl){stEl.textContent='● 연결 실패 — URL/Key 확인';stEl.style.color='#dc2626';}
+    toast('Supabase 연결 실패','ERR'); return;
+  }
+  if(stEl){stEl.textContent='⏳ 확인 중...';stEl.style.color='#f59e0b';}
+  try{
+    var chk=await sbClient.from('jeju_stats').select('key').limit(1);
+    if(chk.error){if(stEl){stEl.textContent='● 오류: '+chk.error.message;stEl.style.color='#dc2626';}toast('Supabase 오류: '+chk.error.message,'ERR');return;}
+    var sbEmpty=!chk.data||chk.data.length===0;
+    var localTotal=SKEYS.reduce(function(a,k,i){return a+Object.keys(DB[i]).length;},0);
+    if(sbEmpty&&localTotal>0){
+      if(stEl){stEl.textContent='⏳ 로컬 데이터('+localTotal+'건) 클라우드 업로드 중...';stEl.style.color='#f59e0b';}
+      var pushed=await pushAllToSupabase();
+      if(stEl){stEl.textContent='● 연결됨 — '+pushed+'개 DB 업로드 완료 (총 '+localTotal+'건)';stEl.style.color='#059669';}
+      toast('연결 성공 — '+localTotal+'건 클라우드 업로드 완료','OK');
+      var guide=document.getElementById('sb-deploy-guide'); if(guide) guide.style.display='';
+    } else if(!sbEmpty){
+      await syncFromSupabase();
+      toast('연결 성공 — 클라우드 데이터 동기화 완료','OK');
+      var guide=document.getElementById('sb-deploy-guide'); if(guide) guide.style.display='';
+    } else {
+      if(stEl){stEl.textContent='● 연결됨 (데이터 없음 — CSV 업로드 후 자동 공유됨)';stEl.style.color='#059669';}
+      toast('Supabase 연결 성공','OK');
+      var guide=document.getElementById('sb-deploy-guide'); if(guide) guide.style.display='';
+    }
+  }catch(e){if(stEl){stEl.textContent='● 오류: '+e.message;stEl.style.color='#dc2626';}toast('오류: '+e.message,'ERR');}
+}
+
+/* 관리자가 연결한 후 — 자격증명이 포함된 배포용 HTML 자동 생성 */
+async function downloadDeployHtml() {
+  var url=(localStorage.getItem('sb_url')||SB_URL).trim();
+  var key=(localStorage.getItem('sb_key')||SB_KEY).trim();
+  if(url.indexOf('YOUR_PROJECT')>=0){toast('먼저 Supabase URL을 입력하고 연결 테스트를 해주세요','ERR');return;}
+  if(key==='YOUR_ANON_KEY'){toast('먼저 Anon Key를 입력하고 연결 테스트를 해주세요','ERR');return;}
+  try {
+    /* 원본 HTML 파일을 서버에서 직접 가져옴 (라이브 DOM 아님) */
+    var resp = await fetch(window.location.href);
+    var html = await resp.text();
+    /* 플레이스홀더를 실제 값으로 교체 */
+    html = html.replace("var SB_URL = 'https://YOUR_PROJECT_ID.supabase.co';",
+                        "var SB_URL = '"+url+"';");
+    html = html.replace("var SB_KEY = 'YOUR_ANON_KEY';",
+                        "var SB_KEY = '"+key+"';");
+    /* 다운로드 */
+    var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'index.html';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    toast('index.html 다운로드 완료 — Netlify에 재배포해 주세요!','OK');
+  } catch(e) {
+    /* fetch 실패 시 (로컬 파일) 안내 메시지 */
+    toast('Netlify 배포 환경에서만 사용 가능합니다. 먼저 Netlify에 배포해 주세요.','ERR');
+  }
+}
+function doLogout() {
+  if (!confirm('로그아웃 하시겠습니까?')) return;
+  sessionStorage.removeItem('pw_ok');
+  sessionStorage.removeItem('role');
+  /* Re-create pw-gate and show it */
+  var gate = document.createElement('div');
+  gate.id = 'pw-gate';
+  gate.innerHTML = '<div class="pw-box">'
+    + '<div class="pw-logo">&#127965;</div>'
+    + '<div class="pw-title">제주관광 통계 시스템</div>'
+    + '<div class="pw-sub">아이디와 비밀번호로 로그인하세요.<br><small style="color:rgba(255,255,255,.35)">관리자&#183;게스트 계정 사용 가능</small></div>'
+    + '<input class="pw-input" type="text" id="pw-id" placeholder="아이디" style="margin-bottom:8px;letter-spacing:0">'
+    + '<input class="pw-input" type="password" id="pw-pw" placeholder="비밀번호">'
+    + '<button class="pw-btn" id="pw-btn">로그인</button>'
+    + '<div class="pw-err" id="pw-err"></div>'
+    + '<div class="pw-hint">&#x1F512; 아이디/비밀번호를 모르시면 관리자에게 문의하세요</div>'
+    + '</div>';
+  document.body.appendChild(gate);
+  /* hide admin menus */
+  applyRole('guest');
+  /* re-bind login events */
+  document.getElementById('pw-btn').addEventListener('click', function(){ doLogin(); });
+  document.getElementById('pw-pw').addEventListener('keydown', function(ev){ if(ev.key==='Enter') doLogin(); });
+  document.getElementById('pw-id').addEventListener('keydown', function(ev){ if(ev.key==='Enter') document.getElementById('pw-pw').focus(); });
+  document.getElementById('pw-id').focus();
+}
+function initGate() {
+  if (sessionStorage.getItem('pw_ok') === '1') {
+    var g = document.getElementById('pw-gate'); if (g) g.remove();
+    applyRole(sessionStorage.getItem('role') || 'guest');
+    return;
+  }
+  document.getElementById('pw-btn').addEventListener('click', function(){ doLogin(); });
+  document.getElementById('pw-pw').addEventListener('keydown', function(ev) {
+    if (ev.key === 'Enter') doLogin();
+  });
+  document.getElementById('pw-id').addEventListener('keydown', function(ev) {
+    if (ev.key === 'Enter') document.getElementById('pw-pw').focus();
+  });
+}
+
+/* ═══ DATA STORES */
+const SKEYS = ['jeju_v3','jeju_mt_v1','jeju_cd_v1','jeju_cm_v1','jeju_trend_v1'];
+var DB = [{},{},{},{},{}]; /* DB[4] = 일일관광동향 */
+
+/* ── Supabase 설정 (데이터관리 탭에서 입력) ── */
+var SB_URL = 'https://ziotcoutwrxyhmklukvk.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inppb3Rjb3V0d3J4eWhta2x1a3ZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNTA1NDgsImV4cCI6MjA4OTgyNjU0OH0.SUFHAzRWVb9ciqAdfqwod-VFAAoNPFSMYXtG0dTsV14';
+var sbClient = null, sbReady = false;
+
+function initSupabase() {
+  if (!window.supabase) return;
+  if (SB_URL.indexOf('YOUR_PROJECT') >= 0) return;
+  try { sbClient = window.supabase.createClient(SB_URL, SB_KEY); sbReady = true; } catch(e) {}
+}
+
+function loadAllDB() {
+  SKEYS.forEach(function(k,i){
+    try{ var r=localStorage.getItem(k); if(r) DB[i]=JSON.parse(r); } catch(e){}
+  });
+}
+async function syncFromSupabase() {
+  if (!sbReady) return;
+  try {
+    var res = await sbClient.from('jeju_stats').select('key,data');
+    if (res.error) {
+      var stEl=document.getElementById('sb-status');
+      if(stEl){stEl.textContent='● 오류: '+res.error.message;stEl.style.color='#dc2626';}
+      toast('Supabase 조회 오류: '+res.error.message,'ERR'); return;
+    }
+    var changed = false;
+    var total = 0;
+    (res.data||[]).forEach(function(row){
+      var i = SKEYS.indexOf(row.key);
+      if (i>=0 && row.data && Object.keys(row.data).length>0) {
+        DB[i]=row.data;
+        try{localStorage.setItem(row.key,JSON.stringify(row.data));}catch(e){}
+        total += Object.keys(row.data).length;
+        changed=true;
+      }
+    });
+    if (changed) {
+      updBadge();
+      /* 현재 보이는 페이지 새로고침 */
+      var pgMain=document.getElementById('pgMain');
+      if(pgMain&&pgMain.classList.contains('on')) renderMainPage();
+      else if(curPage===0) renderStat(curStat);
+    }
+    var stEl=document.getElementById('sb-status');
+    if(stEl){
+      stEl.textContent='● 연결됨 — 클라우드 데이터 '+total+'건 동기화 완료';
+      stEl.style.color='#059669';
+    }
+    return total;
+  } catch(e) {
+    console.error('Supabase 동기화 오류:', e);
+    toast('동기화 오류: '+e.message,'ERR');
+  }
+}
+
+/* 로컬 DB 전체를 Supabase에 업로드 */
+async function pushAllToSupabase() {
+  if (!sbReady) return 0;
+  var stEl=document.getElementById('sb-status');
+  if(stEl){stEl.textContent='⏳ 클라우드에 업로드 중...';stEl.style.color='#f59e0b';}
+  var ok=0;
+  for(var i=0;i<SKEYS.length;i++){
+    var cnt=Object.keys(DB[i]).length;
+    if(cnt===0) continue;
+    try{
+      var r=await sbClient.from('jeju_stats').upsert(
+        {key:SKEYS[i], data:DB[i], updated_at:new Date().toISOString()},
+        {onConflict:'key'}
+      );
+      if(r.error){ toast(SKEYS[i]+' 업로드 실패: '+r.error.message,'ERR'); }
+      else { ok++; }
+    }catch(e){ toast(SKEYS[i]+' 오류: '+e.message,'ERR'); }
+  }
+  if(stEl){
+    var total=SKEYS.reduce(function(a,k,i){return a+Object.keys(DB[i]).length;},0);
+    stEl.textContent='● 연결됨 — '+ok+'개 DB 업로드 완료 (총 '+total+'건)';
+    stEl.style.color='#059669';
+  }
+  return ok;
+}
+async function saveDB(i) {
+  try { localStorage.setItem(SKEYS[i], JSON.stringify(DB[i])); updBadge(); } catch(e) { toast('저장 공간 부족','ERR'); return; }
+  if (!sbReady) return;
+  try {
+    var res = await sbClient.from('jeju_stats').upsert({key:SKEYS[i],data:DB[i],updated_at:new Date().toISOString()},{onConflict:'key'});
+    if (res.error) { toast('Supabase 저장 실패: '+res.error.message,'ERR'); }
+    else { var d=document.getElementById('dbbg'); if(d){d.style.color='#059669';setTimeout(function(){d.style.color='';},1500);} }
+  } catch(e) { toast('Supabase 오류: '+e.message,'ERR'); }
+}
+function updBadge() {
+  document.getElementById('dbbg').textContent =
+    '잠정:'+Object.keys(DB[0]).length+'일 확정:'+Object.keys(DB[1]).length+
+    '월 크루즈:'+Object.keys(DB[2]).length+'일/'+Object.keys(DB[3]).length+'월'+
+    ' 동향:'+Object.keys(DB[4]).length+'건';
+}
+
+/* ═══ UTILS */
+function Nv(v){ return (v===''||v==null) ? 0 : Number(v); }
+function fmt(n){ var v=Math.round(Nv(n)); return v?v.toLocaleString():'0'; }
+function fmtF(n,d){ return Nv(n).toFixed(d===undefined?1:d); }
+function isLF(k){ return k.indexOf('loadfactor')>=0; }
+/* 로컬 시간 기준 오늘 날짜 (UTC 아닌 브라우저 현지 시각 사용) */
+var _now = new Date();
+var today = _now.getFullYear()+'-'+
+  String(_now.getMonth()+1).padStart(2,'0')+'-'+
+  String(_now.getDate()).padStart(2,'0');
+var todayYM = today.slice(0,7);
+/* 전일(어제) 날짜 — 모든 통계 기준일 */
+var _yd = new Date(_now); _yd.setDate(_yd.getDate()-1);
+var yesterday = _yd.getFullYear()+'-'+
+  String(_yd.getMonth()+1).padStart(2,'0')+'-'+
+  String(_yd.getDate()).padStart(2,'0');
+var yesterdayYM = yesterday.slice(0,7);
+
+function getAggDB(dbi,s,e,key) {
+  var ds=Object.keys(DB[dbi]).filter(function(d){ return d>=s&&d<=e; });
+  if(!ds.length) return 0;
+  if(isLF(key)){
+    var v=ds.map(function(d){ return Nv(DB[dbi][d]?DB[dbi][d][key]:0); }).filter(function(x){ return x>0; });
+    return v.length?v.reduce(function(a,b){ return a+b; },0)/v.length:0;
+  }
+  return ds.reduce(function(a,d){ return a+Nv(DB[dbi][d]?DB[dbi][d][key]:0); },0);
+}
+function getMonthVal(dbi,ym,key){ return Nv(DB[dbi][ym]?DB[dbi][ym][key]:0); }
+function pctChg(c,p){ return p?((c-p)/p*100):null; }
+function daysBetween(s,e){ return Math.round((new Date(e)-new Date(s))/86400000)+1; }
+function shiftRngY(s,e,y){ return [y+'-'+s.slice(5), y+'-'+e.slice(5)]; }
+
+/* ═══ TOAST */
+function toast(msg,type) {
+  type=type||'OK';
+  var w=document.getElementById('tw');
+  var el=document.createElement('div');
+  el.className='toast t'+type; el.textContent=msg; w.appendChild(el);
+  setTimeout(function(){
+    el.style.cssText='opacity:0;transform:translateY(8px);transition:.3s';
+    setTimeout(function(){ el.remove(); },300);
+  },2800);
+}
+
+/* ═══ APP NAV */
+var curPage=0, curStat=0, curAdmin=0;
+function gotoMain() {
+  document.getElementById('pgMain').classList.add('on');
+  ['pg0','pg1','pg2','pg3'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.remove('on'); });
+  document.getElementById('nbMain').classList.add('on');
+  ['nb0','nb1','nb2'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.remove('on'); });
+  setNsActive('nsMain');
+  renderMainPage();
+}
+function gotoPage(i) {
+  var role = sessionStorage.getItem('role') || 'guest';
+  if ((i === 1 || i === 2) && role !== 'admin') { return; }
+  curPage=i;
+  var pm=document.getElementById('pgMain'); if(pm) pm.classList.remove('on');
+  var nbm=document.getElementById('nbMain'); if(nbm) nbm.classList.remove('on');
+  [0,1,2,3].forEach(function(j){
+    var nb=document.getElementById('nb'+j); if(nb) nb.classList.toggle('on',j===i);
+    var pg=document.getElementById('pg'+j); if(pg) pg.classList.toggle('on',j===i);
+  });
+  if(i===2) renderMgmt();
+  if(i===3){ renderTrendPage(); [0,1,2,3,4,5].forEach(function(j){var s=document.getElementById('sb'+j);if(s)s.classList.remove('on');}); var s6=document.getElementById('sb6');if(s6)s6.classList.add('on'); }
+}
+function setNsActive(id) {
+  ['nsMain','ns0','ns1','ns2','ns3','ns4','ns5','ns6'].forEach(function(nid){
+    var el=document.getElementById(nid); if(el) el.classList.toggle('on',nid===id);
+  });
+}
+function gotoStatMain(si) {
+  gotoPage(0);
+  setNsActive('ns'+si);
+  setTimeout(function(){ gotoStat(si); }, 60);
+}
+function gotoStat(i) {
+  curStat=i;
+  [0,1,2,3,4,5].forEach(function(j){
+    document.getElementById('sb'+j).classList.toggle('on',j===i);
+    document.getElementById('sc'+j).style.display=j===i?'block':'none';
+  });
+  var sb6=document.getElementById('sb6'); if(sb6) sb6.classList.remove('on');
+  setTimeout(function(){ renderStat(i); },40);
+}
+function gotoAdmin(i) {
+  curAdmin=i;
+  [0,1,2,3,4].forEach(function(j){
+    var ab=document.getElementById('ab'+j); if(ab) ab.classList.toggle('on',j===i);
+    var ac=document.getElementById('ac'+j); if(ac) ac.style.display=j===i?'block':'none';
+  });
+  if(i===4) { var d=document.getElementById('ed4'); if(d&&!d.value) d.value=yesterday; onTrendDateChange(); }
+}
+
+/* ═══ PER-TAB STATE ═══ */
+var charts={};
+/* TS[si] = per-tab state object */
+function mkTS(m,v){ return {mode:'day',refDate:'',rangeS:'',rangeE:'',compYr:0,addYr:0,useAdd:false,monthYr:'',m:m,v:v,cs:'',ce:''}; }
+var TS=[
+  mkTS('t_total','month'),     /* 0 tourist daily    */
+  mkTS('t_total','year'),      /* 1 tourist monthly  */
+  mkTS('c_total_pax','month'), /* 2 cruise daily     */
+  mkTS('c_total_pax','year'),  /* 3 cruise monthly   */
+  mkTS('d_flights','month'),   /* 4 domestic air     */
+  mkTS('i_flights','month')    /* 5 intl air         */
+];
+/* cst aliases TS entries by sid */
+var sidMap={t:0,mt:1,c:2,mc:3,d:4,i:5};
+var cst={};
+['t','mt','c','mc','d','i'].forEach(function(s,i){ cst[s]=TS[i]; });
+
+function getTS(){ return TS[curStat]; }
+function getAllYears(){
+  var k=[];
+  DB.forEach(function(d){ Object.keys(d).forEach(function(x){ k.push(x.slice(0,4)); }); });
+  return k.filter(function(v,i,a){ return a.indexOf(v)===i; });
+}
+function getCurYear(){
+  var ts=getTS();
+  return ((ts.mode==='day'?ts.refDate:(ts.rangeE||ts.rangeS||ts.refDate))||today).slice(0,4);
+}
+function getCompYrs(si){
+  var ts=TS[si];
+  var cy=(ts.mode==='day'?ts.refDate:(ts.rangeE||ts.rangeS||ts.refDate)||today).slice(0,4);
+  if(!ts.compYr||ts.compYr>=+cy) ts.compYr=+cy-1;
+  return getAllYears().concat([1,2,3,4,5,6].map(function(n){ return String(+cy-n); }))
+    .filter(function(v,i,a){ return a.indexOf(v)===i&&v!==cy; }).sort().reverse();
+}
+/* Called by per-tab ctrl events */
+function tcChange(si,prop,val){
+  var ts=TS[si];
+  if(prop==='mode'){ ts.mode=val; }
+  else if(prop==='refDate'){
+    var oc=ts.refDate?ts.refDate.slice(0,4):''; ts.refDate=val;
+    if(val.slice(0,4)!==oc) ts.compYr=+val.slice(0,4)-1;
+  } else if(prop==='rangeS'){ ts.rangeS=val; }
+  else if(prop==='rangeE'){
+    ts.rangeE=val;
+    if(val) ts.compYr=+val.slice(0,4)-1;
+  } else if(prop==='compYr'){ ts.compYr=Number(val)||ts.compYr; }
+  else if(prop==='addYr'){ ts.addYr=Number(val)||0; }
+  else if(prop==='useAdd'){ ts.useAdd=val; if(!val) ts.addYr=0; }
+  else if(prop==='monthYr'){
+    ts.monthYr=val;
+    ts.compYr=+val-1;
+  }
+  if(si===curStat) renderStat(si);
+}
+/* legacy stubs */
+function setMode(m){ tcChange(curStat,'mode',m); }
+function updSelectors(){}
+function onDashCtrl(){}
+function onAddChk(){}
+function onMonthYrChange(){}
+function updRangePill(){}
+
+/* ═══ TABLE CELLS */
+function nCell(v,avg) {
+  var n=Nv(v);
+  if(!n&&n!==0) return '<span class="nz">-</span>';
+  return '<span class="nv">'+(avg?fmtF(n):fmt(n))+'</span>';
+}
+function rBadge(c,p) {
+  var r=pctChg(c,p);
+  if(r===null) return '<span class="bnc">-</span>';
+  var s=r>0?'▲':r<0?'▼':'－';
+  return '<span class="'+(r>0?'bup':r<0?'bdn':'bnc')+'">'+s+' '+Math.abs(r).toFixed(1)+'%</span>';
+}
+function dCell(c,p,avg) {
+  var d=c-p; if(!d) return '<span class="nz">-</span>';
+  return '<span class="'+(d>0?'dup':'ddn')+'">'+(d>0?'+':'')+(avg?fmtF(d):fmt(d))+'</span>';
+}
+function thRow(keys) {
+  return keys.map(function(k){
+    return '<th style="text-align:right;padding:6px 10px;background:var(--c3);font-size:10px;font-weight:700;color:var(--t3);border-bottom:1px solid var(--bd2)">'+k.l+'</th>';
+  }).join('');
+}
+
+/* ═══ DAILY TABLE */
+function getValD(dbi,date,yr,tp,key) {
+  var m=date.slice(5,7),d=date.slice(8,10);
+  if(tp==='day') return Nv(DB[dbi][yr+'-'+m+'-'+d]?DB[dbi][yr+'-'+m+'-'+d][key]:0);
+  if(tp==='month') return getAggDB(dbi,yr+'-'+m+'-01',yr+'-'+m+'-'+d,key);
+  return getAggDB(dbi,yr+'-01-01',yr+'-'+m+'-'+d,key);
+}
+function makeRowBlock(dbi,keys,tp,cy,py,ay,ua,lbl,gc,note) {
+  var cv=keys.map(function(k){ return getValD(dbi,refDate,cy,tp,k.k); });
+  var pv=keys.map(function(k){ return getValD(dbi,refDate,py,tp,k.k); });
+  var av=ua&&ay?keys.map(function(k){ return getValD(dbi,refDate,ay,tp,k.k); }):null;
+  var h='<tr class="rg '+gc+'"><td class="fx" colspan="2"><div class="gn">'+lbl+
+    '<span style="font-size:10px;font-weight:400;color:var(--t3);margin-left:5px">'+note+'</span></div></td>'+thRow(keys)+'</tr>';
+  h+='<tr class="rc"><td class="fx"></td><td class="yc ylc">'+cy+'년<span class="yct ycc">당해</span></td>'+
+    cv.map(function(v,i){ return '<td>'+nCell(v,keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  h+='<tr class="rp"><td class="fx"></td><td class="yc ylp">'+py+'년<span class="yct ycp">직전</span></td>'+
+    pv.map(function(v,i){ return '<td>'+nCell(v,keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  if(av) h+='<tr class="ra"><td class="fx"></td><td class="yc yla">'+ay+'년<span class="yct yca">추가</span></td>'+
+    av.map(function(v,i){ return '<td>'+nCell(v,keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  if(tp==='year'){
+    h+='<tr class="rd"><td class="fx"></td><td class="yc yld">증&nbsp;감 <small>vs 직전</small></td>'+
+      cv.map(function(v,i){ return '<td>'+dCell(v,pv[i],keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+    if(av) h+='<tr class="rd"><td class="fx"></td><td class="yc yld">증&nbsp;감 <small>vs 추가</small></td>'+
+      cv.map(function(v,i){ return '<td>'+dCell(v,av[i],keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  }
+  h+='<tr class="rr"><td class="fx"></td><td class="yc yld">증감률 <small>vs 직전</small></td>'+
+    cv.map(function(v,i){ return '<td>'+rBadge(v,pv[i])+'</td>'; }).join('')+'</tr>';
+  if(av) h+='<tr class="rr"><td class="fx"></td><td class="yc yld">증감률 <small>vs 추가</small></td>'+
+    cv.map(function(v,i){ return '<td>'+rBadge(v,av[i])+'</td>'; }).join('')+'</tr>';
+  return h;
+}
+
+function makeTableRange(dbi,keys) {
+  if(!rangeS||!rangeE||rangeS>rangeE) return '<div style="padding:40px;text-align:center;color:var(--t3)">구간을 설정하세요</div>';
+  var cy=getCurYear(), days=daysBetween(rangeS,rangeE);
+  var note=rangeS+' ~ '+rangeE+' ('+days+'일)';
+  var cv=keys.map(function(k){ return getAggDB(dbi,rangeS,rangeE,k.k); });
+  var r=shiftRngY(rangeS,rangeE,String(compYr));
+  var pv=keys.map(function(k){ return getAggDB(dbi,r[0],r[1],k.k); });
+  var av=null,ra=null;
+  if(useAdd&&addYr){ ra=shiftRngY(rangeS,rangeE,String(addYr)); av=keys.map(function(k){ return getAggDB(dbi,ra[0],ra[1],k.k); }); }
+  var addChip=useAdd&&addYr?'<span class="yct yca">'+addYr+'년</span>':'';
+  var h='<div class="tscr"><table class="ct"><thead><tr><th class="fx">구분</th>'+
+    '<th class="yh" style="text-align:left">연도 <span class="yct ycc">'+cy+'</span>'+
+    '<span class="yct ycp">'+compYr+'</span>'+addChip+'</th>'+
+    keys.map(function(k){ return '<th>'+k.l+'</th>'; }).join('')+'</tr></thead><tbody>';
+  h+='<tr class="rg rp_"><td class="fx" colspan="2"><div class="gn">구간 합계<span style="font-size:10px;font-weight:400;color:var(--t3);margin-left:5px">'+note+'</span></div></td>'+thRow(keys)+'</tr>';
+  h+='<tr class="rc"><td class="fx"></td><td class="yc ylc">'+cy+'년<span class="yct ycc">당해</span></td>'+
+    cv.map(function(v,i){ return '<td>'+nCell(v,keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  h+='<tr class="rp"><td class="fx"></td><td class="yc ylp">'+compYr+'년<span class="yct ycp">직전</span></td>'+
+    pv.map(function(v,i){ return '<td>'+nCell(v,keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  if(av) h+='<tr class="ra"><td class="fx"></td><td class="yc yla">'+addYr+'년<span class="yct yca">추가</span></td>'+
+    av.map(function(v,i){ return '<td>'+nCell(v,keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  h+='<tr class="rd"><td class="fx"></td><td class="yc yld">증&nbsp;감 <small>vs 직전</small></td>'+
+    cv.map(function(v,i){ return '<td>'+dCell(v,pv[i],keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  if(av) h+='<tr class="rd"><td class="fx"></td><td class="yc yld">증&nbsp;감 <small>vs 추가</small></td>'+
+    av.map(function(v,i){ return '<td>'+dCell(v,av[i],keys[i].isAvg)+'</td>'; }).join('')+'</tr>';
+  h+='<tr class="rr"><td class="fx"></td><td class="yc yld">증감률 <small>vs 직전</small></td>'+
+    cv.map(function(v,i){ return '<td>'+rBadge(v,pv[i])+'</td>'; }).join('')+'</tr>';
+  if(av) h+='<tr class="rr"><td class="fx"></td><td class="yc yld">증감률 <small>vs 추가</small></td>'+
+    cv.map(function(v,i){ return '<td>'+rBadge(v,av[i])+'</td>'; }).join('')+'</tr>';
+  return h+'</tbody></table></div>';
+}
+
+function makeTableDaily(dbi,keys) {
+  if(mode==='range') return makeTableRange(dbi,keys);
+  var cy=getCurYear(), m=refDate.slice(5,7), d=refDate.slice(8,10);
+  var mo=parseInt(m), dy=parseInt(d);
+  var gs=[
+    {tp:'day',  lbl:'일 계',gc:'ri',note:'('+mo+'월 '+dy+'일)'},
+    {tp:'month',lbl:'월 계',gc:'rm',note:'('+mo+'/1 ~ '+mo+'/'+dy+')'},
+    {tp:'year', lbl:'누 계',gc:'ry',note:'(1/1 ~ '+mo+'/'+dy+')'}
+  ];
+  var addChip=useAdd&&addYr?'<span class="yct yca">'+addYr+'년</span>':'';
+  var tbl='<div class="tscr"><table class="ct"><thead><tr><th class="fx">구분</th>'+
+    '<th class="yh" style="text-align:left">연도 <span class="yct ycc">'+cy+'</span>'+
+    '<span class="yct ycp">'+compYr+'</span>'+addChip+'</th>'+
+    keys.map(function(k){ return '<th>'+k.l+'</th>'; }).join('')+'</tr></thead><tbody>';
+  gs.forEach(function(g){ tbl+=makeRowBlock(dbi,keys,g.tp,cy,compYr,addYr,useAdd,g.lbl,g.gc,g.note); });
+  return tbl+'</tbody></table></div>';
+}
+
+/* ═══ MONTHLY TABLE */
+/* 크루즈 일별 → 월별 집계 함수 (2023이전 강정항=0 자동처리) */
+function getCruiseMonthAgg(ym,key) {
+  /* ym must be 'YYYY-MM' format */
+  var cleanYm = ym.slice(0,7); /* ensure YYYY-MM only */
+  var yr=cleanYm.slice(0,4), mo=cleanYm.slice(5,7);
+  var s=yr+'-'+mo+'-01';
+  /* 마지막 날 계산 */
+  var lastDay=new Date(+yr,+mo,0).getDate();
+  var e=yr+'-'+mo+'-'+String(lastDay).padStart(2,'0');
+  /* 현재 월이면 어제까지만 집계 */
+  var ymKey=yr+'-'+mo;
+  if(ymKey===todayYM||ymKey===yesterdayYM.slice(0,7)) e=yesterday;
+  return getAggDB(2,s,e,key);
+}
+
+function makeMonthlyTable(dbi,keys) {
+  /* monthYr may be 'YYYY-MM' — extract 4-digit year */
+  var rawCy = monthYr||getCurYear();
+  var cy = rawCy.length>4 ? rawCy.slice(0,4) : rawCy;
+  var py=String(+cy-1), ay=useAdd&&addYr?String(addYr):'';
+  /* compYr may be NaN if set from monthYr — recalculate */
+  if(!compYr||isNaN(compYr)||compYr>=+cy) { compYr=+cy-1; py=String(compYr); }
+  else { py = String(compYr); }
+  /* 현재 연도 데이터가 없으면 DB에서 가장 최근 연도 사용 */
+  if(dbi!=='cruise_agg'){
+    var dbIdx=typeof dbi==='number'?dbi:2;
+    var hasData=Object.keys(DB[dbIdx]).some(function(k){ return k.startsWith(cy+'-'); });
+    if(!hasData){
+      var yrs=Object.keys(DB[dbIdx]).map(function(k){ return k.slice(0,4); })
+               .filter(function(v,i,a){ return a.indexOf(v)===i; }).sort();
+      if(yrs.length){ cy=yrs[yrs.length-1]; }
+    }
+  }
+  var months=['01','02','03','04','05','06','07','08','09','10','11','12'];
+  var mLabels=months.map(function(m){ return parseInt(m)+'월'; });
+  var addChip=ay?'<span class="yct yca">'+ay+'년</span>':'';
+  var h='<div class="tscr"><table class="mt"><thead><tr><th class="mfx">지표</th>'+
+    '<th class="mfx" style="min-width:88px">연도</th>';
+  mLabels.forEach(function(ml){ h+='<th>'+ml+'</th>'; });
+  h+='<th>합계/평균</th></tr></thead><tbody>';
+  function sa(arr,isAvg){ if(isAvg){ var v=arr.filter(function(x){ return x>0; }); return v.length?v.reduce(function(a,b){ return a+b; },0)/v.length:0; } return arr.reduce(function(a,b){ return a+b; },0); }
+  keys.forEach(function(k){
+    var gv=dbi==='cruise_agg'?getCruiseMonthAgg:function(ym,key){ return getMonthVal(dbi,ym,key); };
+    var cvs=months.map(function(m){ return gv(cy+'-'+m,k.k); });
+    var pvs=months.map(function(m){ return gv(py+'-'+m,k.k); });
+    var avs=ay?months.map(function(m){ return gv(ay+'-'+m,k.k); }):null;
+    var cS=sa(cvs,k.isAvg),pS=sa(pvs,k.isAvg),aS=avs?sa(avs,k.isAvg):null;
+    h+='<tr class="mrg"><td class="mfx" colspan="15"><span class="mgn">'+k.l+'</span> '+
+      '<span class="yct ycc">'+cy+'</span><span class="yct ycp">'+py+'</span>'+addChip+'</td></tr>';
+    h+='<tr class="mrc"><td class="mfx"></td><td class="mfx ylc">'+cy+'년<span class="yct ycc">당해</span></td>'+
+      cvs.map(function(v){ return '<td>'+nCell(v,k.isAvg)+'</td>'; }).join('')+'<td>'+nCell(cS,k.isAvg)+'</td></tr>';
+    h+='<tr class="mrp"><td class="mfx"></td><td class="mfx ylp">'+py+'년<span class="yct ycp">직전</span></td>'+
+      pvs.map(function(v){ return '<td>'+nCell(v,k.isAvg)+'</td>'; }).join('')+'<td>'+nCell(pS,k.isAvg)+'</td></tr>';
+    if(avs) h+='<tr class="mra"><td class="mfx"></td><td class="mfx yla">'+ay+'년<span class="yct yca">추가</span></td>'+
+      avs.map(function(v){ return '<td>'+nCell(v,k.isAvg)+'</td>'; }).join('')+'<td>'+nCell(aS,k.isAvg)+'</td></tr>';
+    h+='<tr class="mrd"><td class="mfx"></td><td class="mfx yld">증&nbsp;감 <small>vs직전</small></td>'+
+      cvs.map(function(v,i){ return '<td>'+dCell(v,pvs[i],k.isAvg)+'</td>'; }).join('')+'<td>'+dCell(cS,pS,k.isAvg)+'</td></tr>';
+    if(avs) h+='<tr class="mrd"><td class="mfx"></td><td class="mfx yld">증&nbsp;감 <small>vs추가</small></td>'+
+      cvs.map(function(v,i){ return '<td>'+dCell(v,avs[i],k.isAvg)+'</td>'; }).join('')+'<td>'+dCell(cS,aS,k.isAvg)+'</td></tr>';
+    h+='<tr class="mrr"><td class="mfx"></td><td class="mfx yld">증감률 <small>vs직전</small></td>'+
+      cvs.map(function(v,i){ return '<td>'+rBadge(v,pvs[i])+'</td>'; }).join('')+'<td>'+rBadge(cS,pS)+'</td></tr>';
+    if(avs) h+='<tr class="mrr"><td class="mfx"></td><td class="mfx yld">증감률 <small>vs추가</small></td>'+
+      cvs.map(function(v,i){ return '<td>'+rBadge(v,avs[i])+'</td>'; }).join('')+'<td>'+rBadge(cS,aS)+'</td></tr>';
+  });
+  return h+'</tbody></table></div>';
+}
+
+/* ═══ CHART */
+var CC={
+  t:  ['#1251a3','#7c3aed','#f59e0b'],
+  mt: ['#059669','#7c3aed','#f59e0b'],
+  c:  ['#0284c7','#0891b2','#f59e0b'],
+  mc: ['#065f46','#0891b2','#f59e0b'],
+  d:  ['#7c3aed','#b45309','#0891b2'],
+  i:  ['#0891b2','#dc2626','#7c3aed']
+};
+function hexA(h,a){ var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16); return 'rgba('+r+','+g+','+b+','+a+')'; }
+
+function getChartRng(sid){
+  var st=cst[sid],s=st.cs||'',e=st.ce||'';
+  if(!s||!e){
+    if(mode==='range'&&rangeS&&rangeE){ s=rangeS; e=rangeE; }
+    else { var cy=getCurYear(),cm=refDate.slice(5,7); s=cy+'-'+cm+'-01'; e=mode==='day'?refDate:(rangeE||refDate); }
+  }
+  return{s:s,e:e};
+}
+
+function buildChartDailyData(dbi,key,yrs,sid){
+  var rng=getChartRng(sid),s=rng.s,e=rng.e,cy=e.slice(0,4),st=cst[sid];
+  if(st.v==='month'){
+    var sD=new Date(s),eD=new Date(e),labels=[],series=[];
+    for(var d2=new Date(sD);d2<=eD;d2.setDate(d2.getDate()+1)){
+      var ds=d2.toISOString().slice(0,10); labels.push(ds.slice(5)); series.push(ds);
+    }
+    return{labels:labels,sets:yrs.map(function(yr){ return{yr:yr,data:series.map(function(ds){ var sh=yr+'-'+ds.slice(5); return DB[dbi][sh]?(Nv(DB[dbi][sh][key])||null):null; })}; })};
+  }
+  var allMs=[],sy=+s.slice(0,4),ey=+e.slice(0,4),sm=+s.slice(5,7),em=+e.slice(5,7);
+  for(var y=sy;y<=ey;y++){ var mS=y===sy?sm:1,mE=y===ey?em:12; for(var m=mS;m<=mE;m++) allMs.push({y:y,m:m}); }
+  var labels2=allMs.map(function(x){ return (x.y!==+cy?x.y+'년 ':'')+x.m+'월'; });
+  var iCy=+cy;
+  return{labels:labels2,sets:yrs.map(function(yr){ return{yr:yr,data:allMs.map(function(x){ var ty=+yr+(x.y-iCy),mo=String(x.m).padStart(2,'0'),ds=new Date(ty,x.m,0).getDate(); return getAggDB(dbi,ty+'-'+mo+'-01',ty+'-'+mo+'-'+String(ds).padStart(2,'0'),key)||null; })}; })};
+}
+
+function buildChartMonthlyData(dbi,key,yrs){
+  var labels=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  var gv=dbi==='cruise_agg'?getCruiseMonthAgg:function(ym,k){ return getMonthVal(dbi,ym,k); };
+  return{labels:labels,sets:yrs.map(function(yr){ return{yr:yr,data:[1,2,3,4,5,6,7,8,9,10,11,12].map(function(i){ var mo=String(i).padStart(2,'0'); return gv(yr+'-'+mo,key)||null; })}; })};
+}
+
+function drawChart(sid,dbi,keys,isMonthly){
+  var st=cst[sid],canvas=document.getElementById('ch_'+sid);
+  if(!canvas) return;
+  var mk=null; for(var i=0;i<keys.length;i++){ if(keys[i].k===st.m){mk=keys[i];break;} } if(!mk)mk=keys[0];
+  var cy=isMonthly?(monthYr||getCurYear()):getCurYear(),yrs=[cy,String(compYr)];
+  if(useAdd&&addYr) yrs.push(String(addYr));
+  var effDbi=dbi==='cruise_agg'?'cruise_agg':dbi;
+  var cd=isMonthly?buildChartMonthlyData(effDbi,mk.k,yrs):buildChartDailyData(dbi==='cruise_agg'?2:dbi,mk.k,yrs,sid);
+  var cc=CC[sid]||CC.t,dk=matchMedia('(prefers-color-scheme:dark)').matches;
+  var gc=dk?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)',tc=dk?'#484f58':'#9ca3af';
+  if(charts[sid]) try{charts[sid].destroy();}catch(e){}
+  /* 그라디언트 배경 생성 */
+  function makeGrad(ctx2,color) {
+    var g=ctx2.createLinearGradient(0,0,0,ctx2.canvas.height);
+    g.addColorStop(0,hexA(color,.35)); g.addColorStop(.5,hexA(color,.1)); g.addColorStop(1,hexA(color,0));
+    return g;
+  }
+  /* palette per dataset */
+  var palettes=[
+    {line:cc[0],fill:[hexA(cc[0],.45),hexA(cc[0],.05)],pt:cc[0],dash:[]},
+    {line:cc[1%cc.length],fill:null,pt:cc[1%cc.length],dash:[7,4]},
+    {line:cc[2%cc.length],fill:null,pt:cc[2%cc.length],dash:[3,3]}
+  ];
+  function illGrad(ctx3,colors){
+    var g=ctx3.createLinearGradient(0,0,0,ctx3.canvas.height*0.85);
+    g.addColorStop(0,colors[0]); g.addColorStop(1,colors[1]); return g;
+  }
+  charts[sid]=new Chart(canvas,{
+    type:'line',
+    data:{labels:cd.labels,datasets:cd.sets.map(function(s2,i){
+      var p=palettes[i]||palettes[2];
+      return{
+        label:s2.yr+'년', data:s2.data,
+        borderColor:p.line, borderWidth:i===0?2.8:1.6,
+        borderDash:p.dash,
+        backgroundColor:i===0?function(ctx3){ return ctx3.chart.ctx?illGrad(ctx3.chart.ctx,p.fill):'transparent'; }:'transparent',
+        pointStyle:i===0?'circle':'rectRounded',
+        pointRadius:cd.labels.length>90?0:cd.labels.length>45?1.5:i===0?5:3,
+        pointHoverRadius:i===0?8:6,
+        pointBackgroundColor:p.line, pointBorderColor:'#fff', pointBorderWidth:i===0?2:1,
+        tension:i===0?.42:.35, spanGaps:true, fill:i===0, order:cd.sets.length-i
+      };
+    })},
+    options:{responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:10,right:14,bottom:6,left:6}},
+      plugins:{
+        legend:{
+          display:cd.sets.length>1,
+          position:'top',
+          align:'end',
+          labels:{
+            color:dk?'#94a3b8':'#475569', font:{size:11,weight:'600'},
+            boxWidth:22, boxHeight:3, padding:14,
+            usePointStyle:true, pointStyleWidth:22
+          }
+        },
+        tooltip:{
+          mode:'index', intersect:false,
+          backgroundColor:dk?'rgba(15,23,42,.93)':'rgba(255,255,255,.96)',
+          borderColor:dk?'rgba(99,115,135,.4)':'rgba(0,0,0,.08)', borderWidth:1,
+          titleColor:dk?'#e2e8f0':'#0f172a', titleFont:{size:12,weight:'700'},
+          bodyColor:dk?'#94a3b8':'#374151', bodyFont:{size:12},
+          padding:{x:14,y:11}, cornerRadius:12, boxPadding:6,
+          callbacks:{
+            label:function(ctx){
+              var v=ctx.raw; if(v===null||v===undefined) return null;
+              var bullet=['●','◆','▲'][ctx.datasetIndex]||'●';
+              return ' '+bullet+' '+ctx.dataset.label+':  '+(mk.isAvg?fmtF(v)+'%':fmt(v));
+            }
+          }
+        }
+      },
+      scales:{
+        x:{
+          grid:{color:gc, lineWidth:.6, drawTicks:false},
+          border:{display:false},
+          ticks:{color:tc, font:{size:10}, maxTicksLimit:14, maxRotation:40, padding:6}
+        },
+        y:{
+          grid:{color:gc, lineWidth:.6, drawTicks:false},
+          border:{display:false},
+          ticks:{color:tc, font:{size:11}, callback:function(v){ return mk.isAvg?v+'%':v>=1000?(v/1000).toFixed(0)+'k':v; }, padding:8},
+          beginAtZero:false
+        }
+      },
+      interaction:{mode:'index',intersect:false},
+      animation:{duration:700,easing:'easeInOutCubic'}
+    }
+  });
+}
+
+/* ─── Chart area HTML builder (data-attribute approach, NO inline JS args) ─── */
+function renderChartArea(sid,dbi,keys,isMonthly){
+  var st=cst[sid],cc=CC[sid]||CC.t;
+  var cy=isMonthly?(monthYr||getCurYear()):getCurYear(),yrs=[cy,String(compYr)];
+  if(useAdd&&addYr) yrs.push(String(addYr));
+  /* legend */
+  var legHtml=yrs.map(function(yr,i){
+    return '<div class="legi"><div class="'+(i===0?'ll':'ld')+'" style="'+(i===0?'background:'+cc[i%cc.length]:'border-color:'+cc[i%cc.length])+'"></div><span>'+yr+'년</span></div>';
+  }).join('');
+  /* metric tabs – use data-sid + data-key, handled by delegated listener */
+  var mtHtml=keys.map(function(k){
+    var on=st.m===k.k;
+    return '<button class="mt_'+(on?' on':'')+'"'+(on?' style="background:'+cc[0]+';border-color:'+cc[0]+'"':'')+
+      ' data-action="metric" data-sid="'+sid+'" data-key="'+k.k+'">'+k.l+'</button>';
+  }).join('');
+  /* view tabs - daily only shows 일별, monthly tabs don't need selector */
+  var vtHtml='';
+  /* chart range row */
+  var crHtml='';
+  if(!isMonthly){
+    var rng=getChartRng(sid);
+    crHtml='<div class="crrow"><label>그래프 구간</label>'+
+      '<input type="date" value="'+rng.s+'" data-action="crng" data-sid="'+sid+'" data-which="s">'+
+      '<span class="sep">~</span>'+
+      '<input type="date" value="'+rng.e+'" data-action="crng" data-sid="'+sid+'" data-which="e">'+
+      '<button class="crbtn" data-action="creset" data-sid="'+sid+'">초기화</button></div>';
+  }
+  return '<div class="chart-area">'+
+    '<div class="chart-ctrl">'+
+      '<div class="chart-l">'+
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
+          '<div class="mtabs">'+mtHtml+'</div>'+
+          '<div class="legrow">'+legHtml+'</div>'+
+        '</div>'+crHtml+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:6px">'+
+        '<div class="vtabs">'+vtHtml+'</div>'+
+        '<button class="crbtn" data-action="dlchart" data-sid="'+sid+'" title="그래프 이미지 다운로드" style="font-size:14px;padding:4px 9px">&#11015;</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="ch-wrap"><canvas id="ch_'+sid+'"></canvas></div>'+
+  '</div>';
+}
+
+/* ─── Delegated event handler for chart area ─── */
+document.addEventListener('click', function(ev){
+  var el=ev.target;
+  var action=el.getAttribute('data-action');
+  /* tc-mode buttons — checked before action gate so mode=0 ('day') works */
+  var tcI=el.getAttribute('data-tc');
+  var tcP=el.getAttribute('data-prop');
+  var tcV=el.getAttribute('data-val');
+  if(tcI!==null&&tcP&&tcV){ tcChange(Number(tcI),tcP,tcV); return; }
+  if(!action) return;
+  var sid=el.getAttribute('data-sid')||'';
+  if(action==='metric'){ var key=el.getAttribute('data-key')||''; if(sid&&key){ cst[sid].m=key; renderStat(curStat); } }
+  else if(action==='view'){ var view=el.getAttribute('data-view')||'month'; if(sid){ cst[sid].v=view; renderStat(curStat); } }
+  else if(action==='creset'){ if(sid){ cst[sid].cs=''; cst[sid].ce=''; renderStat(curStat); } }
+  else if(action==='dlchart'){
+    var canvas=document.getElementById('ch_'+sid);
+    if(!canvas){ toast('그래프를 먼저 불러주세요','ERR'); return; }
+    /* 배경 흰색으로 합성 후 다운로드 */
+    var tmp=document.createElement('canvas');
+    tmp.width=canvas.width; tmp.height=canvas.height;
+    var ctx2=tmp.getContext('2d');
+    ctx2.fillStyle='#ffffff'; ctx2.fillRect(0,0,tmp.width,tmp.height);
+    ctx2.drawImage(canvas,0,0);
+    var link=document.createElement('a');
+    var nm=document.getElementById(SCFG.find(function(c){ return c.sid===sid; })&&SCFG.find(function(c){ return c.sid===sid; }).el)?
+      (SCFG.find(function(c){ return c.sid===sid; }).title||sid):sid;
+    link.download='제주관광통계_'+nm+'_'+today+'.png';
+    link.href=tmp.toDataURL('image/png');
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    toast('그래프 이미지 저장됨','OK');
+  }
+});
+document.addEventListener('change', function(ev){
+  var el=ev.target;
+  var action=el.getAttribute('data-action');
+  if(!action) return;
+  var sid=el.getAttribute('data-sid')||'';
+  if(action==='crng'){
+    var which=el.getAttribute('data-which');
+    if(which==='s') cst[sid].cs=el.value; else cst[sid].ce=el.value;
+    /* redraw chart only */
+    var scfg=null;
+    SCFG.forEach(function(c){ if(c.sid===sid) scfg=c; });
+    if(scfg) drawChart(scfg.sid,scfg.dbi,scfg.keys,scfg.isM);
+  }
+});
+
+/* ─── Section config and render ─── */
+var TK=[{k:'t_total',l:'총관광객'},{k:'t_domestic',l:'내국인'},{k:'t_foreign',l:'외국인(소계)'},{k:'t_china',l:'중국'},{k:'t_taiwan',l:'대만'},{k:'t_japan',l:'일본'},{k:'t_singapore',l:'싱가포르'},{k:'t_hongkong',l:'홍콩'},{k:'t_other',l:'기타'}];
+/* 확정 월별 관광객 - 확장 국적 분류 */
+var MTK=[
+  {k:'t_total',l:'총관광객'},{k:'t_domestic',l:'내국인'},{k:'t_foreign',l:'외국인(소계)'},
+  {k:'t_china',l:'중국'},{k:'t_taiwan',l:'대만'},{k:'t_japan',l:'일본'},
+  {k:'t_singapore',l:'싱가포르'},{k:'t_hongkong',l:'홍콩'},
+  {k:'t_malaysia',l:'말레이시아'},{k:'t_indonesia',l:'인도네시아'},
+  {k:'t_vietnam',l:'베트남'},{k:'t_thailand',l:'태국'},
+  {k:'t_asia_other',l:'아시아기타'},{k:'t_us',l:'미국'},{k:'t_west_other',l:'서구 기타'}
+];
+/* 크루즈 일일 잠정 키 (항만별) */
+var CK=[
+  {k:'c_total_ships',l:'소계 선박',isInt:true},{k:'c_total_pax',l:'소계 탑승객'},
+  {k:'c_jeju_ships',l:'제주항 선박',isInt:true},{k:'c_jeju_pax',l:'제주항 탑승객'},
+  {k:'c_gang_ships',l:'강정항 선박',isInt:true},{k:'c_gang_pax',l:'강정항 탑승객'},
+  {k:'c_domestic',l:'내국인'},{k:'c_foreign',l:'외국인(소계)'},
+  {k:'c_china',l:'중국'},{k:'c_japan',l:'일본'},{k:'c_hongkong',l:'홍콩'},
+  {k:'c_taiwan',l:'대만'},{k:'c_singapore',l:'싱가포르'},{k:'c_malaysia',l:'말레이시아'},
+  {k:'c_indonesia',l:'인도네시아'},{k:'c_vietnam',l:'베트남'},{k:'c_thailand',l:'태국'},
+  {k:'c_us',l:'미국'},{k:'c_europe',l:'유럽'},{k:'c_america',l:'아메리카'},
+  {k:'c_oceania',l:'오세아니아'},{k:'c_africa',l:'아프리카'},
+  {k:'c_asia_other',l:'아시아기타'},{k:'c_west_other',l:'서구기타'}
+];
+/* 크루즈 월별 확정 키 (항만+탑승객 국적) */
+var MCK=[
+  /* 소계 먼저 */
+  {k:'c_total_ships',l:'소계 선박'}, {k:'c_total_pax',l:'소계 탑승객'},
+  /* 항만별 */
+  {k:'c_jeju_ships',l:'제주항 선박'},{k:'c_jeju_pax',l:'제주항 탑승객'},
+  {k:'c_gang_ships',l:'강정항 선박'},{k:'c_gang_pax',l:'강정항 탑승객'},
+  /* 탑승객 구분 */
+  {k:'c_domestic',l:'내국인'},{k:'c_foreign',l:'외국인'},
+  {k:'c_japan',l:'일본'},{k:'c_china',l:'중국'},
+  {k:'c_hongkong',l:'홍콩'},{k:'c_taiwan',l:'대만'},
+  {k:'c_singapore',l:'싱가포르'},{k:'c_malaysia',l:'말레이시아'},
+  {k:'c_indonesia',l:'인도네시아'},{k:'c_vietnam',l:'베트남'},
+  {k:'c_thailand',l:'태국'},{k:'c_us',l:'미국'},
+  {k:'c_europe',l:'유럽'},{k:'c_america',l:'아메리카'},
+  {k:'c_oceania',l:'오세아니아'},{k:'c_africa',l:'아프리카'},
+  {k:'c_asia_other',l:'아시아권'},{k:'c_west_other',l:'서구권'}
+];
+var DK=[{k:'d_flights',l:'운항편수'},{k:'d_seats',l:'공급석'},{k:'d_loadfactor',l:'탑승률(%)',isAvg:true}];
+var IK=[{k:'i_flights',l:'운항편수'},{k:'i_seats',l:'공급석'},{k:'i_loadfactor',l:'탑승률(%)',isAvg:true}];
+var SCFG=[
+  {el:'sc0',title:'관광객 잠정통계(일일)',ico:'&#128101;',ibg:'#fff7ed',badge:'<span class="badge-prov">잠정통계</span>',dbi:0,keys:TK,sid:'t',isM:false},
+  {el:'sc1',title:'관광객 확정통계(월별)',ico:'&#9989;',ibg:'#ecfdf5',badge:'<span class="badge-conf">확정통계</span>',dbi:1,keys:MTK,sid:'mt',isM:true},
+  {el:'sc2',title:'크루즈 일일통계',ico:'&#128674;',ibg:'#eff6ff',badge:'<span class="badge-crz">크루즈 일일</span>',dbi:2,keys:CK,sid:'c',isM:false},
+  {el:'sc3',title:'크루즈 월별통계',ico:'&#128674;',ibg:'#ecfdf5',badge:'<span class="badge-conf">크루즈 월별</span>',dbi:'cruise_agg',keys:CK,sid:'mc',isM:true},
+  {el:'sc4',title:'국내선 항공',ico:'&#9992;',ibg:'#ede9fe',badge:'<span class="badge-prov">잠정통계</span>',dbi:0,keys:DK,sid:'d',isM:false},
+  {el:'sc5',title:'국제선 항공',ico:'&#127760;',ibg:'#cffafe',badge:'<span class="badge-crz">잠정통계</span>',dbi:0,keys:IK,sid:'i',isM:false}
+];
+
+function buildTabCtrl(si){
+  var ts=TS[si],cfg=SCFG[si];
+  var cy=(ts.mode==='day'?(ts.refDate||today):(ts.rangeE||ts.rangeS||today)).slice(0,4);
+  if(!ts.compYr||ts.compYr>=+cy) ts.compYr=+cy-1;
+  var allYrs=getCompYrs(si);
+  function mkOpt(arr,sel){
+    return arr.map(function(y){
+      return '<option value="'+y+'"'+(y==sel?' selected':'')+'>'+y+'년</option>';
+    }).join('');
+  }
+  var compOpts=mkOpt(allYrs,ts.compYr);
+  var addOpts='<option value="">선택</option>'+mkOpt(allYrs.filter(function(y){ return y!=ts.compYr; }),ts.addYr);
+  var myYrs=getAllYears().concat([cy]).filter(function(v,i,a){ return a.indexOf(v)===i; }).sort().reverse();
+  var monthOpts=mkOpt(myYrs,ts.monthYr||cy);
+  if(!ts.monthYr) ts.monthYr=cy;
+  /* build date section */
+  var dateHtml='';
+  if(!cfg.isM){
+    var rPill='';
+    if(ts.mode==='range'&&ts.rangeS&&ts.rangeE&&ts.rangeS<=ts.rangeE)
+      rPill='<span class="tc-pill">'+ts.rangeS+' ~ '+ts.rangeE+' <span class="dv">'+daysBetween(ts.rangeS,ts.rangeE)+'일</span></span>';
+    var dayOn  = ts.mode==='day'  ?'on':'';
+    var rngOn  = ts.mode==='range'?'on':'';
+    dateHtml = '<div class="tc-mode">'
+      +'<button class="'+dayOn+'" data-tc="'+si+'" data-prop="mode" data-val="day">기준일</button>'
+      +'<button class="'+rngOn+'" data-tc="'+si+'" data-prop="mode" data-val="range">구간</button>'
+      +'</div>';
+    if(ts.mode==='day'){
+      dateHtml+='<input type="date" class="tc-date" value="'+(ts.refDate||'')+'" data-tc="'+si+'" data-prop="refDate" onchange="tcChange('+si+',\'refDate\',this.value)">';
+    } else {
+      dateHtml+='<input type="date" class="tc-date" value="'+(ts.rangeS||'')+'" data-tc="'+si+'" data-prop="rangeS" onchange="tcChange('+si+',\'rangeS\',this.value)">'
+        +'<span style="color:var(--t3);font-size:11px;margin:0 2px">~</span>'
+        +'<input type="date" class="tc-date" value="'+(ts.rangeE||'')+'" data-tc="'+si+'" data-prop="rangeE" onchange="tcChange('+si+',\'rangeE\',this.value)">'
+        +rPill;
+    }
+    dateHtml+='<div class="tc-sep"></div>';
+  } else {
+    dateHtml='<span class="tc-label">조회연도</span><select class="tc-sel" data-tc="'+si+'" data-prop="monthYr" onchange="tcChange('+si+',\'monthYr\',this.value)">'+monthOpts+'</select><div class="tc-sep"></div>';
+  }
+  /* addYr dropdown */
+  var addDropdown=ts.useAdd?'<select class="tc-sel" data-tc="'+si+'" data-prop="addYr" onchange="tcChange('+si+',\'addYr\',this.value)">'+addOpts+'</select>':'';
+  return '<div class="tab-ctrl">'+dateHtml
+    +'<span class="tc-label">직전비교</span><select class="tc-sel" data-tc="'+si+'" data-prop="compYr" onchange="tcChange('+si+',\'compYr\',this.value)">'+compOpts+'</select>'
+    +'<div class="tc-sep"></div>'
+    +'<label style="font-size:11px;display:flex;align-items:center;gap:4px;cursor:pointer">'
+      +'<input type="checkbox" id="adc'+si+'"'+(ts.useAdd?' checked':'')+' data-tc="'+si+'" data-prop="useAdd" onchange="tcChange('+si+',\'useAdd\',this.checked)" style="accent-color:var(--p)"> 추가비교'
+    +'</label>'+addDropdown
+  +'</div>';
+}
+function renderStat(si){
+  var cfg=SCFG[si],ts=TS[si];
+  var _rawCy=cfg.isM?(ts.monthYr||getCurYear()):getCurYear();
+  var cy=_rawCy.length>4?_rawCy.slice(0,4):_rawCy;
+  /* sync globals for table/chart functions that still use them */
+  refDate=ts.refDate; rangeS=ts.rangeS; rangeE=ts.rangeE; mode=ts.mode;
+  compYr=ts.compYr; addYr=ts.addYr; useAdd=ts.useAdd; monthYr=ts.monthYr;
+  var sub=cfg.isM?('조회연도 '+cy+' | 비교: '+ts.compYr+'년'):
+    ((ts.mode==='day'?'기준일 '+ts.refDate:'구간 '+(ts.rangeS||'?')+' ~ '+(ts.rangeE||'?'))+' | '+cy+'년 vs '+ts.compYr+'년');
+  var tbl=cfg.isM?makeMonthlyTable(cfg.dbi,cfg.keys):makeTableDaily(cfg.dbi==='cruise_agg'?2:cfg.dbi,cfg.keys);
+  var chart=renderChartArea(cfg.sid,cfg.dbi,cfg.keys,cfg.isM);
+  var addChip=ts.useAdd&&ts.addYr?'<span class="yct yca">'+ts.addYr+'년</span>':'';
+  /* CSV 다운로드 버튼 (표 상단) */
+  var dlBtn='<div class="tbl-top"><button class="dl-csv-btn" onclick="downloadTableCSV('+si+')">&#8615; CSV 다운로드</button></div>';
+  /* 통계별 유의사항 주석 */
+  var noteMap={
+    0:'※ 통계 해석시 유의 사항: <strong>본 통계는 잠정 통계이므로 월별 확정통계와 다를 수 있습니다.</strong>',
+    2:'※ <strong>본 통계는 입항예보서 기준이므로 실제 하선객 통계와 다를 수 있습니다.</strong>',
+    3:'※ <strong>본 통계는 일일단위 크루즈 입항통계를 월별로 합산한 수치입니다. 실제 하선객 통계와 다를 수 있습니다.</strong>'
+  };
+  var noteHtml=noteMap[si]?'<div class="stat-note">'+noteMap[si]+'</div>':'';
+  document.getElementById(cfg.el).innerHTML=
+    '<div class="card">'+buildTabCtrl(si)+
+    '<div class="ch"><div class="chl">'+
+    '<div class="cico" style="background:'+cfg.ibg+'">'+cfg.ico+'</div>'+
+    '<div><div class="ctit">'+cfg.title+'</div><div class="csub">'+sub+'</div></div></div>'+
+    '<div class="rowf">'+cfg.badge+'<span class="yct ycc">'+cy+'년</span>'+
+    '<span class="yct ycp">'+ts.compYr+'년</span>'+addChip+'</div></div>'+
+    dlBtn+tbl+noteHtml+chart+'</div>';
+  setTimeout(function(){ drawChart(cfg.sid,cfg.dbi,cfg.keys,cfg.isM); },50);
+}
+
+
+
+/* ═══ SEASONAL SVG BACKGROUNDS ═══ */
+var SEASON_SVGS = {
+  spring: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#f472b6"/></linearGradient></defs><rect width="800" height="220" fill="url(#sg)"/><ellipse cx="400" cy="260" rx="500" ry="120" fill="#a855f7" opacity=".35"/><circle cx="100" cy="50" r="8" fill="#fde68a" opacity=".7"/><circle cx="700" cy="30" r="6" fill="#fde68a" opacity=".6"/><circle cx="400" cy="10" r="5" fill="#fff" opacity=".5"/>'
+    + '<g opacity=".85"><rect x="60" y="140" width="8" height="60" fill="#92400e" rx="4"/><circle cx="64" cy="118" r="26" fill="#f9a8d4"/><circle cx="50" cy="128" r="16" fill="#f472b6"/><circle cx="78" cy="125" r="18" fill="#ec4899"/><circle cx="64" cy="108" r="14" fill="#fce7f3"/></g>'
+    + '<g opacity=".8"><rect x="160" y="150" width="7" height="50" fill="#92400e" rx="3"/><circle cx="163" cy="130" r="22" fill="#f9a8d4"/><circle cx="150" cy="138" r="14" fill="#f472b6"/><circle cx="176" cy="135" r="16" fill="#ec4899"/></g>'
+    + '<g opacity=".7"><rect x="680" y="135" width="8" height="65" fill="#92400e" rx="4"/><circle cx="684" cy="113" r="25" fill="#fce7f3"/><circle cx="670" cy="123" r="15" fill="#f9a8d4"/><circle cx="698" cy="120" r="18" fill="#ec4899"/></g>'
+    + '<g fill="#fbbf24" opacity=".9"><ellipse cx="320" cy="190" rx="80" ry="22"/><ellipse cx="470" cy="195" rx="60" ry="18"/><ellipse cx="550" cy="185" rx="90" ry="24"/><ellipse cx="200" cy="200" rx="70" ry="20"/></g>'
+    + '<g fill="#f59e0b" opacity=".7"><ellipse cx="310" cy="188" rx="75" ry="20"/><ellipse cx="460" cy="193" rx="55" ry="16"/></g>'
+    + '</svg>',
+
+  summer: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="55%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#14b8a6"/></linearGradient><linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#6ee7b7"/></linearGradient></defs><rect width="800" height="220" fill="url(#sg)"/>'
+    + '<ellipse cx="400" cy="145" rx="800" ry="80" fill="#0c4a6e" opacity=".25"/>'
+    + '<path d="M0 155 Q100 140 200 155 Q300 170 400 155 Q500 140 600 155 Q700 170 800 155 L800 220 L0 220Z" fill="#0369a1" opacity=".6"/>'
+    + '<path d="M0 165 Q120 150 240 165 Q360 180 480 165 Q600 150 720 165 Q760 172 800 165 L800 220 L0 220Z" fill="#0284c7" opacity=".7"/>'
+    + '<path d="M0 175 Q100 165 200 175 Q350 188 500 175 Q650 162 800 175 L800 220 L0 220Z" fill="#38bdf8" opacity=".5"/>'
+    + '<circle cx="680" cy="45" r="35" fill="#fef08a" opacity=".9"/><circle cx="680" cy="45" r="28" fill="#fde047"/>'
+    + '<g fill="#fff" opacity=".7"><ellipse cx="150" cy="55" rx="45" ry="18"/><ellipse cx="120" cy="55" rx="30" ry="15"/><ellipse cx="180" cy="52" rx="35" ry="14"/><ellipse cx="300" cy="40" rx="50" ry="19"/><ellipse cx="270" cy="40" rx="32" ry="16"/><ellipse cx="330" cy="38" rx="38" ry="15"/></g>'
+    + '<g fill="#f0fdf4" opacity=".9"><path d="M50 210 Q70 195 90 210Z"/><path d="M100 208 Q125 190 150 208Z"/><path d="M600 210 Q630 192 660 210Z"/><path d="M700 208 Q725 195 750 208Z"/></g>'
+    + '</svg>',
+
+  autumn: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b45309"/><stop offset="50%" stop-color="#c2410c"/><stop offset="100%" stop-color="#7c2d12"/></linearGradient></defs><rect width="800" height="220" fill="url(#sg)"/>'
+    + '<ellipse cx="400" cy="260" rx="600" ry="140" fill="#92400e" opacity=".3"/>'
+    + '<circle cx="650" cy="40" r="50" fill="#fbbf24" opacity=".15"/><circle cx="650" cy="40" r="35" fill="#f59e0b" opacity=".2"/>'
+    + '<g opacity=".9"><rect x="80" y="110" width="12" height="90" fill="#78350f" rx="5"/><circle cx="86" cy="85" r="35" fill="#dc2626"/><circle cx="65" cy="98" r="22" fill="#ef4444"/><circle cx="108" cy="92" r="26" fill="#b91c1c"/><circle cx="86" cy="70" r="18" fill="#fca5a5"/></g>'
+    + '<g opacity=".85"><rect x="200" y="120" width="10" height="80" fill="#78350f" rx="4"/><circle cx="205" cy="98" r="30" fill="#f97316"/><circle cx="186" cy="108" r="20" fill="#fb923c"/><circle cx="225" cy="105" r="22" fill="#ea580c"/></g>'
+    + '<g opacity=".8"><rect x="560" y="115" width="11" height="85" fill="#78350f" rx="5"/><circle cx="565" cy="92" r="32" fill="#fbbf24"/><circle cx="546" cy="104" r="21" fill="#f59e0b"/><circle cx="586" cy="100" r="24" fill="#d97706"/></g>'
+    + '<g opacity=".7"><rect x="680" y="125" width="9" height="75" fill="#78350f" rx="4"/><circle cx="684" cy="104" r="26" fill="#ef4444"/><circle cx="668" cy="113" r="17" fill="#dc2626"/><circle cx="700" cy="110" r="19" fill="#f97316"/></g>'
+    + '<g fill="#fbbf24" opacity=".6"><ellipse cx="15" cy="115" r="5"/><ellipse cx="140" cy="90" r="4"/><ellipse cx="350" cy="70" r="5"/><ellipse cx="480" cy="95" r="4"/><ellipse cx="630" cy="80" r="6"/><ellipse cx="760" cy="100" r="4"/></g>'
+    + '<path d="M0 185 Q200 170 400 185 Q600 200 800 185 L800 220 L0 220Z" fill="#7c2d12" opacity=".4"/>'
+    + '</svg>',
+
+  winter: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1e3a5f"/><stop offset="60%" stop-color="#1e40af"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient></defs><rect width="800" height="220" fill="url(#sg)"/>'
+    + '<path d="M0 90 Q100 50 180 70 Q260 85 320 60 Q400 30 480 55 Q540 72 600 48 Q680 20 800 50 L800 220 L0 220Z" fill="#fff" opacity=".95"/>'
+    + '<path d="M0 100 Q80 65 160 82 Q230 96 300 72 Q380 48 450 68 Q510 84 570 62 Q650 35 800 62 L800 220 L0 220Z" fill="#dbeafe" opacity=".6"/>'
+    + '<path d="M0 110 Q100 78 200 90 Q300 102 400 82 Q500 62 600 78 Q700 94 800 75 L800 130 L0 130Z" fill="#bfdbfe" opacity=".5"/>'
+    + '<g fill="#fff" opacity=".7"><ellipse cx="120" cy="55" rx="50" ry="20"/><ellipse cx="90" cy="55" rx="35" ry="16"/><ellipse cx="160" cy="52" rx="40" ry="16"/><ellipse cx="350" cy="38" rx="55" ry="20"/><ellipse cx="550" cy="42" rx="60" ry="21"/><ellipse cx="700" cy="35" rx="48" ry="18"/></g>'
+    + '<g fill="#93c5fd" opacity=".8"><text x="50" y="30" font-size="16" text-anchor="middle">*</text><text x="250" y="20" font-size="12" text-anchor="middle">*</text><text x="450" y="28" font-size="18" text-anchor="middle">*</text><text x="650" y="18" font-size="14" text-anchor="middle">*</text><text x="750" y="32" font-size="10" text-anchor="middle">*</text></g>'
+    + '<path d="M0 170 Q200 155 400 170 Q600 185 800 168 L800 220 L0 220Z" fill="#1e3a5f" opacity=".5"/>'
+    + '</svg>'
+};
+
+function setSeasonBg(s) {
+  var el = document.getElementById('heroSeason');
+  if(!el) return;
+  var key = Object.keys(SEASONS).find(function(k){ return SEASONS[k]===s; }) || 'winter';
+  var svg = SEASON_SVGS[key] || SEASON_SVGS.winter;
+  el.style.background = 'url("data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '") center/cover no-repeat';
+  el.style.minHeight = '220px';
+  // apply body class for theme vars
+  ['spring','summer','autumn','winter'].forEach(function(k){ document.body.classList.remove(k); });
+  document.body.classList.add(key);
+}
+
+/* ═══ SEASONAL CONFIG ═══ */
+var SEASONS = {
+  spring: {
+    months:[3,4,5], name:'봄', art:'&#127800;',
+    badge:'&#127800; 봄', desc:'유채꽃 만개 시즌',
+    colors:{hero1:'#6d1b7b',hero2:'#c0392b',grad1:'#e91e8c',accent:'#ff6eb4'}
+  },
+  summer: {
+    months:[6,7,8], name:'여름', art:'&#127754;',
+    badge:'&#127754; 여름', desc:'에메랄드 바다 시즌',
+    colors:{hero1:'#023e8a',hero2:'#0096c7',grad1:'#00b4d8',accent:'#06d6a0'}
+  },
+  autumn: {
+    months:[9,10,11], name:'가을', art:'&#127809;',
+    badge:'&#127809; 가을', desc:'단풍 절정 시즌',
+    colors:{hero1:'#7a3b00',hero2:'#c0582a',grad1:'#e07020',accent:'#fcbf49'}
+  },
+  winter: {
+    months:[12,1,2], name:'겨울', art:'&#10052;&#65039;',
+    badge:'&#10052;&#65039; 겨울', desc:'한라산 설경 시즌',
+    colors:{hero1:'#0a1628',hero2:'#1a3a6e',grad1:'#2a5ca8',accent:'#90e0ef'}
+  }
+};
+function getSeason() {
+  var mo = new Date().getMonth()+1;
+  if(mo>=3&&mo<=5) return SEASONS.spring;
+  if(mo>=6&&mo<=8) return SEASONS.summer;
+  if(mo>=9&&mo<=11) return SEASONS.autumn;
+  return SEASONS.winter;
+}
+function applySeasonTheme(s) {
+  var body = document.body;
+  ['spring','summer','autumn','winter'].forEach(function(k){ body.classList.remove(k); });
+  var cls = Object.keys(SEASONS).find(function(k){ return SEASONS[k]===s; });
+  if(cls) body.classList.add(cls);
+  var el = document.getElementById('seasonArt');
+  if(el) el.innerHTML = s.art;
+  var badge = document.getElementById('seasonBadge');
+  if(badge) badge.innerHTML = s.badge + ' · ' + s.desc;
+}
+
+/* ═══ MAIN PAGE RENDER ═══ */
+function fmtK(n) {
+  n = Math.round(Nv(n));
+  if(!n) return '<span style="color:var(--t3)">-</span>';
+  return n.toLocaleString();
+}
+function chgHtml(c, p) {
+  if(!p) return '';
+  var d=c-p, r=(d/p*100);
+  var cls=d>0?'up':d<0?'dn':'nc';
+  var arr=d>0?'▲':d<0?'▼':'－';
+  return '<span class="kpi-chg '+cls+'" style="font-size:10px">'+arr+' '+Math.abs(r).toFixed(1)+'%</span>';
+}
+function fmtK(n) {
+  n = Math.round(Nv(n));
+  if(!n) return '<span style="color:var(--t3)">-</span>';
+  if(n >= 10000) return n.toLocaleString();
+  return n.toLocaleString();
+}
+function fmtKm(n) {
+  n = Math.round(Nv(n));
+  if(!n) return '<span style="color:var(--t3)">-</span>';
+  return n.toLocaleString()+'<span style="font-size:16px;font-weight:500;color:var(--t2);margin-left:2px">명</span>';
+}
+function chgBadge(c, p) {
+  if(!p) return '';
+  var d=c-p, r=(d/p*100);
+  var cls=d>0?'up':d<0?'dn':'nc', arr=d>0?'▲':d<0?'▼':'－';
+  return '<div class="kfeat-chg '+cls+'" style="font-size:16px">'+arr+' '+Math.abs(r).toFixed(1)+'%</div>';
+}
+/* 7-day labels and data from today backwards */
+function drawMiniChartDual(canvasId,labels,data,pyData,color,pyColor){
+  var canvas=document.getElementById(canvasId);
+  if(!canvas) return;
+  var dk=matchMedia('(prefers-color-scheme:dark)').matches;
+  var gc=dk?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';
+  var tc=dk?'#6b7280':'#9ca3af';
+  if(window['_mc_'+canvasId]) try{window['_mc_'+canvasId].destroy();}catch(e){}
+  function makeGrad(ctx2,col){var g=ctx2.createLinearGradient(0,0,0,120);g.addColorStop(0,col+'55');g.addColorStop(1,col+'00');return g;}
+  window['_mc_'+canvasId]=new Chart(canvas,{
+    type:'line',
+    data:{labels:labels,datasets:[
+      {label:'당해',data:data,borderColor:color,borderWidth:2.5,
+       backgroundColor:function(ctx3){return ctx3.chart.ctx?makeGrad(ctx3.chart.ctx,color):'transparent';},
+       pointRadius:data.length>8?2:3,pointBackgroundColor:color,tension:.4,fill:true,spanGaps:true,order:1},
+      {label:'전년',data:pyData,borderColor:pyColor,borderWidth:1.5,borderDash:[5,3],
+       backgroundColor:'transparent',pointRadius:1.5,tension:.4,fill:false,spanGaps:true,order:2}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',align:'end',
+        labels:{color:tc,font:{size:10},boxWidth:18,boxHeight:2,padding:8,usePointStyle:false}},
+        tooltip:{mode:'index',intersect:false,
+          backgroundColor:dk?'#1e293b':'#fff',borderColor:dk?'#334155':'#e2e8f0',borderWidth:1,
+          titleColor:dk?'#e2e8f0':'#111',bodyColor:dk?'#94a3b8':'#555',
+          padding:{x:10,y:8},cornerRadius:8,
+          callbacks:{label:function(ctx){var v=ctx.raw;return v!==null&&v!==undefined?' '+ctx.dataset.label+': '+v.toLocaleString():null;}}}},
+      scales:{
+        x:{grid:{color:gc,lineWidth:.5},border:{display:false},ticks:{color:tc,font:{size:11},maxRotation:0}},
+        y:{grid:{color:gc,lineWidth:.5},border:{display:false},ticks:{color:tc,font:{size:11},callback:function(v){return v>=10000?(v/10000).toFixed(0)+'만':v.toLocaleString();}},beginAtZero:false}},
+      interaction:{mode:'index',intersect:false},animation:{duration:600}}
+  });
+}
+
+function get7dayLabels() {
+  var labels=[], dates=[];
+  for(var i=13;i>=0;i--){
+    var d=new Date(_now); d.setDate(d.getDate()-i);
+    var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    labels.push((d.getMonth()+1)+'/'+(d.getDate())); dates.push(ds);
+  }
+  return {labels:labels, dates:dates};
+}
+/* 12-month labels from 11 months ago to current month */
+function get12moLabels() {
+  var labels=[], yms=[];
+  var now=new Date(_now), yr=now.getFullYear(), mo=now.getMonth();
+  for(var i=11;i>=0;i--){
+    var d=new Date(yr,mo-i,1);
+    var y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0');
+    labels.push((d.getMonth()+1)+'월'); yms.push(y+'-'+m);
+  }
+  return {labels:labels, yms:yms};
+}
+function drawMiniChart(canvasId, labels, data, color) {
+  var canvas=document.getElementById(canvasId);
+  if(!canvas) return;
+  var dk=matchMedia('(prefers-color-scheme:dark)').matches;
+  var gc=dk?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';
+  var tc=dk?'#6b7280':'#9ca3af';
+  if(window['_mc_'+canvasId]) try{window['_mc_'+canvasId].destroy();}catch(e){}
+  window['_mc_'+canvasId]=new Chart(canvas,{
+    type:'line',
+    data:{labels:labels, datasets:[{
+      data:data, borderColor:color, borderWidth:2,
+      backgroundColor:function(ctx){ var c=ctx.chart.ctx; if(!c) return color+'33'; var g=c.createLinearGradient(0,0,0,120); g.addColorStop(0,color+'55'); g.addColorStop(1,color+'00'); return g; },
+      pointRadius:data.length>8?2:3, pointHoverRadius:5,
+      pointBackgroundColor:color, tension:.4, fill:true, spanGaps:true
+    }]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{mode:'index',intersect:false,
+        backgroundColor:dk?'#1e293b':'#fff',borderColor:dk?'#334155':'#e2e8f0',borderWidth:1,
+        titleColor:dk?'#e2e8f0':'#111',bodyColor:dk?'#94a3b8':'#555',padding:{x:10,y:8},cornerRadius:8,
+        callbacks:{label:function(ctx){ return ' '+ctx.raw.toLocaleString(); }}}},
+      scales:{
+        x:{grid:{color:gc,lineWidth:.5},border:{display:false},ticks:{color:tc,font:{size:11},maxRotation:0}},
+        y:{grid:{color:gc,lineWidth:.5},border:{display:false},ticks:{color:tc,font:{size:9},callback:function(v){ return v>=10000?(v/10000).toFixed(0)+'만':v.toLocaleString(); }},beginAtZero:false}
+      },
+      interaction:{mode:'index',intersect:false},
+      animation:{duration:600,easing:'easeInOutQuart'}}
+  });
+}
+
+/* ═══ 일일관광동향 ═══════════════════════════════════════════ */
+var TREND_CATS = [
+  {id:'policy',   label:'관광정책/마케팅', color:'#1e5fa8', ico:'&#127758;', desc:'국내외 정부·지자체·국제관광기구·단체 동향'},
+  {id:'trend',    label:'관광동향',       color:'#059669', ico:'&#127939;', desc:'국내·인바운드·해외관광 업계 중심 동향'},
+  {id:'aviation', label:'항공동향',       color:'#7c3aed', ico:'&#9992;&#65039;', desc:'스케줄 변경·신규취항·전세기·유류할증료 등'},
+  {id:'cruise',   label:'크루즈동향',     color:'#0284c7', ico:'&#128674;', desc:'아시아·카리브·지중해 등 글로벌 크루즈 시장'},
+  {id:'research', label:'연구/보고서',    color:'#b45309', ico:'&#128196;', desc:'국내외 관광 연구보고서'},
+  {id:'media',    label:'언론보도',       color:'#dc2626', ico:'&#128333;', desc:'주요 관광 관련 언론 보도'},
+  {id:'economy',  label:'경제동향',       color:'#374151', ico:'&#128200;', desc:'관광 관련 경제지표 및 거시경제 동향'}
+];
+
+function renderMainPage() {
+  var s=getSeason();
+  /* Use today if data exists, else fallback to latest available */
+  var dbKeys=Object.keys(DB[0]).sort();
+  var latest=dbKeys.length?dbKeys[dbKeys.length-1]:today;
+  var refTd=(DB[0][today]&&Object.keys(DB[0][today]).length)?today:latest;
+  var footer=document.getElementById('mainFooter');
+  if(footer) footer.innerHTML='제주특별자치도 관광통계 관리 시스템 | DB기준: '+refTd+' | 오늘: '+today;
+  /* 최근 일일관광동향 요약 */
+  (function(){
+    var tKeys=Object.keys(DB[4]).sort().reverse();
+    var card=document.getElementById('trendSummaryCard');
+    var body=document.getElementById('trendSummaryBody');
+    var dateEl=document.getElementById('trendSummaryDate');
+    if(!tKeys.length){
+      if(card) card.style.display='';
+      if(body) body.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:13px">&#128240; 아직 입력된 관광동향이 없습니다<br><span style="font-size:11px">관리자 탭에서 일일동향을 입력하세요</span></div>';
+      if(dateEl) dateEl.textContent='';
+      return;
+    }
+    if(card) card.style.display='';
+    var lt=tKeys[0]; var rec=DB[4][lt]||{};
+    if(dateEl) dateEl.textContent='기준일: '+lt;
+    if(body) body.innerHTML=TREND_CATS.map(function(c){
+      var txt=rec[c.id]||''; if(!txt.trim()) return '';
+      var lines=txt.split('\n').filter(function(l){return l.trim();});
+      return '<div style="padding:7px 10px;background:var(--c2);border-radius:6px;border-left:3px solid '+c.color+'">'+
+        '<div style="font-size:11px;font-weight:700;color:'+c.color+';margin-bottom:3px">'+c.ico+' '+c.label+'</div>'+
+        '<div style="font-size:12px;color:var(--t1);line-height:1.5">'+lines[0]+
+        (lines.length>1?' <span style="color:var(--t3)">외 '+(lines.length-1)+'건</span>':'')+'</div></div>';
+    }).join('');
+  })();
+  /* seasonal bg removed - using CSS class only */
+  ['spring','summer','autumn','winter'].forEach(function(k){ document.body.classList.remove(k); });
+  var skey=Object.keys(SEASONS).find(function(k){ return SEASONS[k]===s; })||'winter'; document.body.classList.add(skey);
+
+  /* 전일 기준: 전역 yesterday 변수 사용 */
+  var td=yesterday, m=td.slice(5,7), d=td.slice(8,10);
+  var ym=today.slice(0,7);
+  var prevYr=String(+td.slice(0,4)-1);
+  var prevRef=prevYr+'-'+m+'-'+d;
+  var prevYM=prevYr+'-'+m;
+
+  var dtEl=document.getElementById('heroDt');
+  if(dtEl) dtEl.textContent=td.replace(/-/g,'.');
+  var cmpEl=document.getElementById('heroYrComp');
+  if(cmpEl) cmpEl.textContent=prevYr+'년 동기';
+
+  /* ── Category menu ── */
+  var menuItems=[
+    {ico:'&#128101;',title:'관광객 잠정',sub:'일일',color:'#fff7ed',si:0},
+    {ico:'&#9989;',title:'관광객 확정',sub:'월별',color:'#ecfdf5',si:1},
+    {ico:'&#128674;',title:'크루즈 일일',sub:'항만별',color:'#eff6ff',si:2},
+    {ico:'&#128674;',title:'크루즈 월별',sub:'합산',color:'#f0fdf4',si:3},
+    {ico:'&#9992;&#65039;',title:'국내선',sub:'항공',color:'#ede9fe',si:4},
+    {ico:'&#127760;',title:'국제선',sub:'항공',color:'#cffafe',si:5},
+    {ico:'&#128240;',title:'일일동향',sub:'관광동향',color:'#eff6ff',si:'trend'},
+  ];
+  var mg=document.getElementById('statMenuGrid');
+  if(mg){
+    mg.innerHTML=menuItems.map(function(it){
+      return '<div class="cat-item" data-si="'+it.si+'">'+
+        '<div class="ci-ttl">'+it.title+'</div>'+
+        '<div class="ci-sub">'+it.sub+'</div>'+
+      '</div>';
+    }).join('');
+    mg.querySelectorAll('.cat-item').forEach(function(el){
+      el.addEventListener('click',function(){
+        var si=this.getAttribute('data-si');
+        if(si==='trend') gotoPage(3);
+        else gotoStatMain(+si);
+      });
+    });
+  }
+
+  /* ── 7-day dates ── */
+  var w7=get7dayLabels();
+  var labels7=w7.labels, dates7=w7.dates;
+  /* ── 12-month ── */
+  var m12=get12moLabels();
+  var labels12=m12.labels, yms12=m12.yms;
+
+  /* ━━ PANEL 0: 관광객 잠정(일일) ━━ */
+  (function(){
+    var cv=Nv(DB[0][refTd]&&DB[0][refTd]['t_total']);
+    var pv=Nv(DB[0][prevRef]&&DB[0][prevRef]['t_total']);
+    var prevRef0=String(+refTd.slice(0,4)-1)+refTd.slice(4);
+    var el=document.getElementById('kpi0');
+    if(el) el.innerHTML=
+      '<div class="kpi-illust">&#129523;</div>'+
+      '<div class="kfeat"><div class="kfeat-lbl">오늘 총관광객</div>'+
+      '<div class="kfeat-val">'+fmtKm(cv)+'</div>'+
+      chgBadge(cv,pv)+
+      '<div class="kfeat-cmp">전년동기 '+fmtK(pv)+'명</div></div>'+
+      '<div class="ksub-row">'+
+      '<div class="ksub"><div class="ksub-lbl">내국인</div><div class="ksub-val">'+fmtK(Nv(DB[0][refTd]&&DB[0][refTd]['t_domestic']))+'명</div></div>'+
+      '<div class="ksub"><div class="ksub-lbl">외국인</div><div class="ksub-val">'+fmtK(Nv(DB[0][refTd]&&DB[0][refTd]['t_foreign']))+'명</div></div>'+
+      '</div>';
+    var data7=dates7.map(function(ds){ return DB[0][ds]?Nv(DB[0][ds]['t_total']):null; });
+    /* 전년 동기 14일 */
+    var pyDates7=dates7.map(function(ds){ return String(+ds.slice(0,4)-1)+ds.slice(4); });
+    var pyData7=pyDates7.map(function(ds){ return DB[0][ds]?Nv(DB[0][ds]['t_total']):null; });
+    drawMiniChartDual('mChart0',labels7,data7,pyData7,'#1251a3','#94a3b8');
+    var per=document.getElementById('mPeriod0');
+    if(per) per.textContent='당해(실선) / 전년동기(점선) 14일 추이';
+  })();
+
+  /* ━━ PANEL 1: 관광객 확정(월별) — 가장 최근 확정 월 기준 ━━ */
+  (function(){
+    var gv=function(ym2,key){ return Nv(DB[1][ym2]&&DB[1][ym2][key]); };
+    /* 이번 달 데이터 없으면 DB에서 가장 최근 월 찾기 */
+    var dispYm = ym;
+    if(!DB[1][ym]){
+      var mtKeys=Object.keys(DB[1]).sort();
+      dispYm = mtKeys.length ? mtKeys[mtKeys.length-1] : ym;
+    }
+    var dispPrevYm = String(+dispYm.slice(0,4)-1)+'-'+dispYm.slice(5,7);
+    var cv=gv(dispYm,'t_total'), pv=gv(dispPrevYm,'t_total');
+    var el=document.getElementById('kpi1');
+    if(el) el.innerHTML=
+      '<div class="kpi-illust">&#129523;</div>'+
+      '<div class="kfeat"><div class="kfeat-lbl">'+dispYm+' 확정</div>'+
+      '<div class="kfeat-val">'+fmtKm(cv)+'</div>'+
+      chgBadge(cv,pv)+
+      '<div class="kfeat-cmp">전년동기 '+fmtK(pv)+'명</div></div>'+
+      '<div class="ksub-row">'+
+      '<div class="ksub"><div class="ksub-lbl">내국인</div><div class="ksub-val">'+fmtK(gv(dispYm,'t_domestic'))+'명</div></div>'+
+      '<div class="ksub"><div class="ksub-lbl">외국인</div><div class="ksub-val">'+fmtK(gv(dispYm,'t_foreign'))+'명</div></div>'+
+      '</div>';
+    var data12=yms12.map(function(y){ return DB[1][y]?gv(y,'t_total'):null; });
+    /* 전년 동기 12개월 */
+    var pyYms12=yms12.map(function(y){ return String(+y.slice(0,4)-1)+y.slice(4); });
+    var pyData12=pyYms12.map(function(y){ return DB[1][y]?Nv(DB[1][y]['t_total']):null; });
+    drawMiniChartDual('mChart1',labels12,data12,pyData12,'#059669','#6ee7b7');
+    var per=document.getElementById('mPeriod1');
+    if(per) per.textContent='당해(실선) / 전년동기(점선) 12개월 추이';
+  })();
+
+  /* ━━ PANEL 2: 크루즈 일일 ━━ */
+  (function(){
+    /* td = yesterday 기준. 없으면 DB 최근 날짜 폴백 */
+    var crKeys=Object.keys(DB[2]).sort();
+    var tdRec = DB[2][td];  /* td = yesterday */
+    var refTd2 = tdRec ? td : (crKeys.length ? crKeys[crKeys.length-1] : td);
+    var rec2 = DB[2][refTd2] || {};
+    var cv = Nv(rec2['c_total_pax']);
+    var ships = Nv(rec2['c_total_ships']);
+    /* 입항없음: refTd2 날짜 데이터가 실제로 있는데 선박=0 && 탑승객=0 인 경우만 */
+    var hasRec = !!DB[2][refTd2];
+    var noEntry = hasRec && ships===0 && cv===0;
+    /* 전년동기: refTd2 날짜의 1년 전 */
+    var prevKey2 = String(+refTd2.slice(0,4)-1)+refTd2.slice(4);
+    var prevRec2 = DB[2][prevKey2];
+    var pv = Nv(prevRec2&&prevRec2['c_total_pax']);
+    var prevShips2 = Nv(prevRec2&&prevRec2['c_total_ships']);
+    var prevEntryStr = !prevRec2
+      ? '<span style="color:#9ca3af">전년 데이터없음</span>'
+      : (prevShips2===0&&pv===0
+          ? '<span style="color:#9ca3af">입항없음</span>'
+          : fmtK(pv)+'명');
+    var el=document.getElementById('kpi2');
+    if(el) el.innerHTML=
+      '<div class="kpi-illust">&#128674;</div>'+
+      (noEntry
+        ? '<div class="kfeat"><div class="kfeat-lbl">'+refTd2+' 크루즈</div>'+
+          '<div class="kfeat-val" style="font-size:20px;color:#6b7280;letter-spacing:-.5px">크루즈 입항없음</div>'+
+          '<div class="kfeat-cmp">전년동기 '+prevEntryStr+'</div></div>'+
+          '<div class="ksub-row"><div class="ksub"><div class="ksub-lbl">입항선박</div><div class="ksub-val">0척</div></div></div>'
+        : '<div class="kfeat"><div class="kfeat-lbl">'+refTd2+' 탑승객</div>'+
+          '<div class="kfeat-val">'+fmtKm(cv)+'</div>'+
+          chgBadge(cv,pv)+
+          '<div class="kfeat-cmp">전년동기 '+prevEntryStr+'</div></div>'+
+          '<div class="ksub-row">'+
+          '<div class="ksub"><div class="ksub-lbl">소계선박</div><div class="ksub-val">'+(ships>0?ships+'척':'0척')+'</div></div>'+
+          '<div class="ksub"><div class="ksub-lbl">제주항</div><div class="ksub-val">'+Nv(rec2['c_jeju_ships'])+'척</div></div>'+
+          '<div class="ksub"><div class="ksub-lbl">강정항</div><div class="ksub-val">'+Nv(rec2['c_gang_ships'])+'척</div></div>'+
+          '</div>'
+      );
+    var data7=dates7.map(function(ds){ return DB[2][ds]?Nv(DB[2][ds]['c_total_pax']):null; });
+    /* 전년동기 14일 */
+    var pyDates7c=dates7.map(function(ds){ return String(+ds.slice(0,4)-1)+ds.slice(4); });
+    var pyData7c=pyDates7c.map(function(ds){ return DB[2][ds]?Nv(DB[2][ds]['c_total_pax']):null; });
+    drawMiniChartDual('mChart2',labels7,data7,pyData7c,'#0284c7','#7dd3fc');
+    var per=document.getElementById('mPeriod2');
+    if(per) per.textContent='당해(실선) / 전년동기(점선) 14일 추이';
+  })();
+
+  /* ━━ PANEL 3: 항공(국내+국제) ━━ */
+  (function(){
+    var dFlights=Nv(DB[0][refTd]&&DB[0][refTd]['d_flights']);
+    var iFlights=Nv(DB[0][refTd]&&DB[0][refTd]['i_flights']);
+    var dLF=Nv(DB[0][refTd]&&DB[0][refTd]['d_loadfactor']);
+    var iLF=Nv(DB[0][refTd]&&DB[0][refTd]['i_loadfactor']);
+    var dPrev=Nv(DB[0][prevRef]&&DB[0][prevRef]['d_flights']);
+    var iPrev=Nv(DB[0][prevRef]&&DB[0][prevRef]['i_flights']);
+    var el=document.getElementById('kpi3');
+    function fmtLF(v){ return v?v.toFixed(1)+'%':'-'; }
+    if(el) el.innerHTML=
+      '<div class="kpi-illust">&#128748;</div>'+
+      '<div style="display:flex;flex-direction:column;gap:6px;flex:1">'+
+      /* 국내선 */
+      '<div style="padding-bottom:6px;border-bottom:1px solid var(--bd)">'+
+        '<div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:2px">&#9992;&#65039; 국내선</div>'+
+        '<div style="font-size:32px;font-weight:900;color:#1a56db;line-height:1">'+fmtK(dFlights)+'<span style="font-size:12px;font-weight:400;color:var(--t2)">편</span></div>'+
+        '<div style="font-size:12px;color:var(--t2);font-weight:600;margin-top:2px">탑승률 '+fmtLF(dLF)+'</div>'+
+      '</div>'+
+      /* 국제선 */
+      '<div>'+
+        '<div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:2px">&#127760; 국제선</div>'+
+        '<div style="font-size:32px;font-weight:900;color:#1a56db;line-height:1">'+fmtK(iFlights)+'<span style="font-size:12px;font-weight:400;color:var(--t2)">편</span></div>'+
+        '<div style="font-size:12px;color:var(--t2);font-weight:600;margin-top:2px">탑승률 '+fmtLF(iLF)+'</div>'+
+      '</div>'+
+      '</div>';
+    var dataD=dates7.map(function(ds){ return DB[0][ds]?Nv(DB[0][ds]['d_loadfactor']):null; });
+    var dataI=dates7.map(function(ds){ return DB[0][ds]?Nv(DB[0][ds]['i_loadfactor']):null; });
+    /* Two-line chart: domestic + international load factors */
+    var canvas3=document.getElementById('mChart3');
+    if(canvas3){
+      if(window['_mc_mChart3']) try{window['_mc_mChart3'].destroy();}catch(e){}
+      var dk3=matchMedia('(prefers-color-scheme:dark)').matches;
+      var gc3=dk3?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';
+      var tc3=dk3?'#6b7280':'#9ca3af';
+      window['_mc_mChart3']=new Chart(canvas3,{
+        type:'line',
+        data:{labels:labels7, datasets:[
+          {label:'국내선',data:dataD,borderColor:'#7c3aed',borderWidth:2,backgroundColor:'#7c3aed22',pointRadius:3,tension:.4,fill:true,spanGaps:true},
+          {label:'국제선',data:dataI,borderColor:'#0ea5e9',borderWidth:2,backgroundColor:'transparent',borderDash:[5,3],pointRadius:3,tension:.4,fill:false,spanGaps:true}
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,
+          layout:{padding:{top:4,right:4}},
+          plugins:{legend:{display:true,position:'top',align:'end',labels:{color:tc3,font:{size:9},boxWidth:16,boxHeight:2,padding:8}},
+            tooltip:{mode:'index',intersect:false,backgroundColor:dk3?'#1e293b':'#fff',borderColor:dk3?'#334155':'#e2e8f0',borderWidth:1,padding:{x:10,y:8},cornerRadius:8,
+              titleColor:dk3?'#e2e8f0':'#111',bodyColor:dk3?'#94a3b8':'#555',
+              callbacks:{label:function(ctx){ return ' '+ctx.dataset.label+': '+(ctx.raw?ctx.raw.toFixed(1)+'%':'-'); }}}},
+          scales:{
+            x:{grid:{color:gc3,lineWidth:.5},border:{display:false},ticks:{color:tc3,font:{size:9},maxRotation:0}},
+            y:{grid:{color:gc3,lineWidth:.5},border:{display:false},ticks:{color:tc3,font:{size:9},callback:function(v){ return v; }},beginAtZero:false}},
+          interaction:{mode:'index',intersect:false},animation:{duration:600}}
+      });
+    }
+    var per=document.getElementById('mPeriod3');
+    if(per) per.textContent='탑승률 국내선(실선) / 국제선(점선) 14일 추이';
+  })();
+
+  /* ── Footer ── */
+  var footer=document.getElementById('mainFooter');
+  if(footer) footer.innerHTML='제주특별자치도 관광통계 관리 시스템 &nbsp;|&nbsp; '+td+' 현재';
+}
+
+/* ═══ ADMIN FORMS */
+var ADMIN_CFG=[
+  {dbi:0,fields:['t_total','t_domestic','t_foreign','t_china','t_taiwan','t_japan','t_singapore','t_hongkong','t_other','d_flights','d_seats','d_loadfactor','i_flights','i_seats','i_loadfactor']},
+  {dbi:1,fields:['t_total','t_domestic','t_foreign','t_china','t_taiwan','t_japan','t_singapore','t_hongkong','t_malaysia','t_indonesia','t_vietnam','t_thailand','t_asia_other','t_us','t_west_other']},
+  {dbi:2,fields:['c_jeju_ships','c_jeju_pax','c_gang_ships','c_gang_pax','c_total_ships','c_total_pax','c_domestic','c_foreign','c_japan','c_china','c_hongkong','c_taiwan','c_singapore','c_malaysia','c_indonesia','c_vietnam','c_thailand','c_us','c_europe','c_america','c_oceania','c_africa','c_asia_other','c_west_other']},
+  {dbi:3,fields:['c_jeju_ships','c_jeju_pax','c_gang_ships','c_gang_pax','c_total_ships','c_total_pax','c_domestic','c_foreign','c_japan','c_china','c_hongkong','c_taiwan','c_singapore','c_malaysia','c_indonesia','c_vietnam','c_thailand','c_us','c_europe','c_america','c_oceania','c_africa','c_asia_other','c_west_other']}
+];
+var adminDates=['','','',''];
+
+function onAdminDateChange(ai){ adminDates[ai]=document.getElementById('ed'+ai).value; loadAdminForm(ai); }
+function loadAdminForm(ai){
+  var cfg=ADMIN_CFG[ai],dt=adminDates[ai],e=DB[cfg.dbi][dt];
+  cfg.fields.forEach(function(k){ var el=document.getElementById('f'+ai+'_'+k); if(el) el.value=e?(Nv(e[k])||''):''; });
+  var ex=!!(dt&&DB[cfg.dbi][dt]);
+  document.getElementById('es'+ai).innerHTML=ex?'<span class="tag tok_">기존 데이터 수정</span>':'';
+  document.getElementById('del'+ai).style.display=ex?'':'none';
+  document.getElementById('emsg'+ai).textContent=dt?(dt+' 데이터'):'날짜를 선택하세요';
+}
+function autoF(ai){
+  var fk = ai===1
+    ? ['t_china','t_taiwan','t_japan','t_singapore','t_hongkong','t_malaysia','t_indonesia','t_vietnam','t_thailand','t_asia_other','t_us','t_west_other']
+    : ['t_china','t_taiwan','t_japan','t_singapore','t_hongkong','t_other'];
+  var p='f'+ai+'_';
+  var sum=fk.reduce(function(s,k){ var el=document.getElementById(p+k); return s+(el?Nv(el.value):0); },0);
+  var fe=document.getElementById(p+'t_foreign'); if(fe) fe.value=sum||'';
+  var de=document.getElementById(p+'t_domestic');
+  var te=document.getElementById(p+'t_total'); if(te) te.value=((de?Nv(de.value):0)+sum)||'';
+}
+function autoFC(ai){
+  var p='f'+ai+'_';
+  /* 소계 선박 = 제주항 + 강정항 */
+  var js=document.getElementById(p+'c_jeju_ships'),gs=document.getElementById(p+'c_gang_ships');
+  var ts=document.getElementById(p+'c_total_ships');
+  if(ts&&js&&gs) ts.value=(Nv(js.value)+Nv(gs.value))||'';
+  /* 소계 탑승객 = 제주항 + 강정항 */
+  var jp=document.getElementById(p+'c_jeju_pax'),gp=document.getElementById(p+'c_gang_pax');
+  var tp=document.getElementById(p+'c_total_pax');
+  if(tp&&jp&&gp) tp.value=(Nv(jp.value)+Nv(gp.value))||'';
+  /* 외국인 소계 = 국적별 합산 (크루즈 일일/월별) */
+  var natKeys=['c_japan','c_china','c_hongkong','c_taiwan','c_singapore',
+    'c_malaysia','c_indonesia','c_vietnam','c_thailand','c_us',
+    'c_europe','c_america','c_oceania','c_africa','c_asia_other','c_west_other'];
+  var fEl=document.getElementById(p+'c_foreign');
+  if(fEl){
+    var fSum=natKeys.reduce(function(a,k){
+      var el=document.getElementById(p+k); return a+(el?Nv(el.value):0);
+    },0);
+    if(fSum>0) fEl.value=fSum;
+  }
+}
+
+function saveAdmin(ai){
+  var cfg=ADMIN_CFG[ai],dt=adminDates[ai];
+  if(!dt){ toast('날짜를 선택하세요','ERR'); return; }
+  var row={};
+  cfg.fields.forEach(function(k){ var el=document.getElementById('f'+ai+'_'+k); row[k]=el?Nv(el.value):0; });
+  DB[cfg.dbi][dt]=row; saveDB(cfg.dbi); loadAdminForm(ai); toast('✓ '+dt+' 저장완료','OK');
+}
+function deleteAdmin(ai){
+  var cfg=ADMIN_CFG[ai],dt=adminDates[ai];
+  if(!dt||!DB[cfg.dbi][dt]) return;
+  if(!confirm(dt+' 삭제합니까?')) return;
+  delete DB[cfg.dbi][dt]; saveDB(cfg.dbi); loadAdminForm(ai); toast(dt+' 삭제됨','INF');
+}
+function resetAdmin(ai){
+  var cfg=ADMIN_CFG[ai];
+  cfg.fields.forEach(function(k){ var el=document.getElementById('f'+ai+'_'+k); if(el) el.value=''; });
+  loadAdminForm(ai);
+}
+
+/* ═══ DATA MANAGEMENT */
+var CSV_HDRS=[
+  '날짜,총관광객,내국인,외국인,중국,대만,일본,싱가포르,홍콩,기타,국내편수,국내공급석,국내탑승률,국제편수,국제공급석,국제탑승률',
+  '년월,총관광객,내국인,외국인,중국,대만,일본,싱가포르,홍콩,말레이시아,인도네시아,베트남,태국,아시아기타,미국,서구기타',
+  '날짜,제주항선박,제주항탑승객,강정항선박,강정항탑승객,소계선박,소계탑승객,내국인,외국인,일본,중국,홍콩,대만,싱가포르,말레이시아,인도네시아,베트남,태국,미국,유럽,아메리카,오세아니아,아프리카,아시아,서구',
+  '년월,제주항선박,제주항탑승객,강정항선박,강정항탑승객,소계선박,소계탑승객,내국인,외국인,일본,중국,홍콩,대만,싱가포르,말레이시아,인도네시아,베트남,태국,미국,유럽,아메리카,오세아니아,아프리카,아시아권,서구권',
+  '날짜,국내편수,국내공급석,국내탑승률',
+  '날짜,국제편수,국제공급석,국제탑승률'
+];
+var DB_FIELDS=[
+  ['t_total','t_domestic','t_foreign','t_china','t_taiwan','t_japan','t_singapore','t_hongkong','t_other','d_flights','d_seats','d_loadfactor','i_flights','i_seats','i_loadfactor'],
+  ['t_total','t_domestic','t_foreign','t_china','t_taiwan','t_japan','t_singapore','t_hongkong','t_malaysia','t_indonesia','t_vietnam','t_thailand','t_asia_other','t_us','t_west_other'],
+  ['c_jeju_ships','c_jeju_pax','c_gang_ships','c_gang_pax','c_total_ships','c_total_pax','c_domestic','c_foreign','c_japan','c_china','c_hongkong','c_taiwan','c_singapore','c_malaysia','c_indonesia','c_vietnam','c_thailand','c_us','c_europe','c_america','c_oceania','c_africa','c_asia_other','c_west_other'],
+  ['c_jeju_ships','c_jeju_pax','c_gang_ships','c_gang_pax','c_total_ships','c_total_pax','c_domestic','c_foreign','c_japan','c_china','c_hongkong','c_taiwan','c_singapore','c_malaysia','c_indonesia','c_vietnam','c_thailand','c_us','c_europe','c_america','c_oceania','c_africa','c_asia_other','c_west_other'],
+  ['d_flights','d_seats','d_loadfactor'],
+  ['i_flights','i_seats','i_loadfactor']
+];
+var DB_NAMES=['일일잠정(관광객+항공)','월별확정(관광객)','크루즈일일','크루즈월별','국내항공','국제항공'];
+
+function renderMgmt(){
+  var nm=['일일잠정','월별확정','크루즈일일','크루즈월별'];
+  document.getElementById('msummary').innerHTML=DB.map(function(d,i){
+    return '<div class="card"><div class="cb" style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--p)">'+
+      Object.keys(d).length+'<span style="font-size:12px;font-weight:400;color:var(--t2)">건</span></div>'+
+      '<div style="font-size:11px;color:var(--t3);margin-top:3px">'+nm[i]+'</div></div></div>';
+  }).join('');
+  var ds0=Object.keys(DB[0]).sort(),ds2=Object.keys(DB[2]).sort();
+  if(ds0.length){ document.getElementById('exp0S').value=ds0[0]; document.getElementById('exp0E').value=ds0[ds0.length-1]; }
+  if(ds2.length){ document.getElementById('exp2S').value=ds2[0]; document.getElementById('exp2E').value=ds2[ds2.length-1]; }
+  updImpHint(); renderList();
+}
+function updImpHint(){
+  var t=Number(document.getElementById('impType').value);
+  document.getElementById('impHint').textContent=CSV_HDRS[t];
+}
+function doExport(dbi,how){
+  var keys=Object.keys(DB[dbi]).sort();
+  if(how==='range'){
+    var sEl=document.getElementById('exp'+dbi+'S'),eEl=document.getElementById('exp'+dbi+'E');
+    if(!sEl||!eEl||!sEl.value||!eEl.value){ toast('기간 선택 필요','ERR'); return; }
+    keys=keys.filter(function(k){ return k>=sEl.value&&k<=eEl.value; });
+  }
+  if(!keys.length){ toast('내보낼 데이터 없음','ERR'); return; }
+  var flds=DB_FIELDS[dbi];
+  var rows=[CSV_HDRS[dbi]];
+  keys.forEach(function(k){
+    var e=DB[storeDbi][k]||{};
+    rows.push([k].concat(flds.map(function(f){ return Nv(e[f])||0; })).join(','));
+  });
+  var b=new Blob(['\uFEFF'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=url; a.download='jeju_'+DB_NAMES[dbi]+'_'+today+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  toast(keys.length+'건 내보내기 완료','OK');
+}
+function onFileSelect(inp){
+  var f=inp.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(e){ document.getElementById('csvInput').value=e.target.result; };
+  r.readAsText(f,'UTF-8');
+}
+/* 헤더 열 이름 → DB 필드 이름 매핑 테이블 */
+var COL_MAP={
+  '날짜':'__date__','년월':'__date__','date':'__date__','일자':'__date__',
+  '날짜(yyyy-mm-dd)':'__date__','년월(yyyy-mm)':'__date__',
+  '총계':'t_total','총관광객':'t_total','전체':'t_total',
+  '내국인':'t_domestic',
+  '외국인':'t_foreign','외국인계':'t_foreign','외국인합계':'t_foreign','외국인소계':'t_foreign',
+  '중국':'t_china','대만':'t_taiwan','일본':'t_japan',
+  '싱가포르':'t_singapore','홍콩':'t_hongkong','말레이시아':'t_malaysia',
+  '기타':'t_other','외국인기타':'t_other','기타외국인':'t_other',
+  '인도네시아':'t_indonesia','베트남':'t_vietnam','태국':'t_thailand',
+  '아시아기타':'t_asia_other','아시아기타외':'t_asia_other','아시아권기타':'t_asia_other','아시아권':'t_asia_other',
+  '미국':'t_us',
+  '서구기타':'t_west_other','서구등기타':'t_west_other','서구권기타':'t_west_other','서구권':'t_west_other',
+  '유럽':'c_europe','아메리카':'c_america','오세아니아':'c_oceania','아프리카':'c_africa',
+  '국내편수':'d_flights','국내공급석':'d_seats','국내탑승률':'d_loadfactor',
+  '국제편수':'i_flights','국제공급석':'i_seats','국제탑승률':'i_loadfactor',
+  '제주항선박':'c_jeju_ships','제주항탑승객':'c_jeju_pax',
+  '강정항선박':'c_gang_ships','강정항탑승객':'c_gang_pax',
+  '소계선박':'c_total_ships','소계탑승객':'c_total_pax',
+  '선박수':'c_total_ships','총관광객(크루즈)':'c_total_pax',
+  '내국인(크루즈)':'c_domestic','외국인(크루즈)':'c_foreign',
+  'c_일본':'c_japan','c_중국':'c_china','c_홍콩':'c_hongkong','c_대만':'c_taiwan',
+  'c_싱가포르':'c_singapore','c_말레이시아':'c_malaysia','c_인도네시아':'c_indonesia',
+  'c_베트남':'c_vietnam','c_태국':'c_thailand','c_미국':'c_us',
+  'c_유럽':'c_europe','c_아메리카':'c_america','c_오세아니아':'c_oceania',
+  'c_아프리카':'c_africa','c_아시아':'c_asia_other','c_서구':'c_west_other'
+};
+/* 크루즈(dbi=2,3) 전용 COL_MAP — 국적명이 관광객 필드와 충돌 방지 */
+var CRUISE_COL_MAP={
+  '날짜':'__date__','년월':'__date__',
+  '제주항선박':'c_jeju_ships','제주항탑승객':'c_jeju_pax',
+  '강정항선박':'c_gang_ships','강정항탑승객':'c_gang_pax',
+  '소계선박':'c_total_ships','소계탑승객':'c_total_pax',
+  '내국인':'c_domestic','외국인':'c_foreign','외국인소계':'c_foreign',
+  '일본':'c_japan','중국':'c_china','홍콩':'c_hongkong','대만':'c_taiwan',
+  '싱가포르':'c_singapore','말레이시아':'c_malaysia','인도네시아':'c_indonesia',
+  '베트남':'c_vietnam','태국':'c_thailand','미국':'c_us',
+  '유럽':'c_europe','아메리카':'c_america','오세아니아':'c_oceania',
+  '아프리카':'c_africa','아시아':'c_asia_other','서구':'c_west_other'
+};
+/* Header normalization: strip units, newlines, parenthetical info */
+function normalizeHdr(h){
+  return h.replace(/\r?\n/g,'').replace(/[（(][^)）]*[)）]/g,'').replace(/\s+/g,'').toLowerCase();
+}
+var COL_MAP_LOWER={};
+var CRUISE_COL_MAP_LOWER={};;
+Object.keys(COL_MAP).forEach(function(k){ COL_MAP_LOWER[normalizeHdr(k)]=COL_MAP[k]; });
+Object.keys(CRUISE_COL_MAP).forEach(function(k){ CRUISE_COL_MAP_LOWER[normalizeHdr(k)]=CRUISE_COL_MAP[k]; });
+function doImport(){
+  var dbi=Number(document.getElementById('impType').value);
+  var txt=(document.getElementById('csvInput').value)||'';
+  if(!txt.trim()){ toast('CSV 입력 필요','ERR'); return; }
+  var isAv=(dbi===4||dbi===5);
+  var storeDbi=isAv?0:dbi;
+  try{
+    var rawLines=txt.trim().split(/\r?\n/);
+    var flds=DB_FIELDS[dbi],cnt=0,skip=0;
+    if(!rawLines.length||rawLines[0].trim()===''){toast('파일이 비어있습니다','ERR');return;}
+    if(!flds||!flds.length){toast('잘못된 유형 선택 (dbi='+dbi+')','ERR');return;}
+    /* 헤더 행 파싱 */
+    var hdr=rawLines[0].split(',').map(function(x){ return x.trim().replace(/^"|"$/g,'').replace(/^\uFEFF/,''); });
+    var hdr0clean=hdr[0].replace(/\r?\n/g,'').replace(/[（(][^)）]*[)）]/g,'').trim();
+    /* Skip comment rows: scan to find header row or first data row */
+    var si=0, hasHeader=false;
+    for(var _r=0;_r<Math.min(rawLines.length,8);_r++){
+      var _first=rawLines[_r].split(',')[0].trim().replace(/^\uFEFF/,'').replace(/^"+|"+$/g,'');
+      if(/^\d{4}-\d{2}/.test(_first)){si=_r;hasHeader=false;break;}
+      if(/날짜|년월|date/i.test(rawLines[_r])){
+        /* 다음 행이 서브헤더(빈 날짜)이면 한 줄 더 건너뜀 */
+        var _nxt=_r+1<rawLines.length?rawLines[_r+1].split(',')[0].trim():'';
+        si = (_nxt===''||(_nxt&&!/^\d{4}-\d{2}/.test(_nxt))&&!/날짜|년월|date/i.test(_nxt)) ? _r+2 : _r+1;
+        hasHeader=true;break;
+      }
+    }
+    /* 연도+월 분리 형식 감지 */
+    var isYM=false;
+    var MON_MAP={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06',
+                 'Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'};
+    var needMonConv=false;
+    if(si<rawLines.length){
+      var tr=rawLines[si].split(',');
+      var firstVal=tr[0].trim();
+      if(tr.length>=2&&/^\d{4}$/.test(firstVal)&&/^\d{1,2}$/.test(tr[1].trim())) isYM=true;
+      if(/^[A-Za-z]{3}-\d{2}$/.test(firstVal)) needMonConv=true;
+    }
+    /* 헤더 기반 인덱스 매핑 (이름 기반) */
+    var colIdx=null;
+    if(hasHeader){
+      colIdx={};
+      var dataStart=isYM?2:1;
+      var activeMap=(dbi===2||dbi===3)?CRUISE_COL_MAP:COL_MAP;
+      var activeLower=(dbi===2||dbi===3)?CRUISE_COL_MAP_LOWER:COL_MAP_LOWER;
+      hdr.forEach(function(h,i){
+        var mapped=activeMap[h]||activeMap[h.toLowerCase()]||activeLower[normalizeHdr(h)]||null;
+        if(mapped&&mapped!=='__date__') colIdx[mapped]=i-dataStart;
+        if(mapped==='__date__') colIdx['__date__']=i; /* track date col */
+      });
+    }
+    for(var i=si;i<rawLines.length;i++){
+      /* Proper CSV parse: handle quoted fields like "31,232" */
+      var c=(function(line){
+        var res=[],cur='',inQ=false;
+        for(var _i=0;_i<line.length;_i++){
+          var ch=line[_i];
+          if(ch==='"'){inQ=!inQ;}
+          else if(ch===','&&!inQ){res.push(cur.trim());cur='';}
+          else{cur+=ch;}
+        }
+        res.push(cur.trim());
+        return res.map(function(x){return x.replace(/^"+|"+$/g,'').replace(/,/g,'');});
+      })(rawLines[i]);
+      if(!c[0]) continue;
+      var k,vals;
+      if(isYM){
+        if(c.length<2){ skip++; continue; }
+        var yr=c[0],mo=String(+c[1]).padStart(2,'0');
+        if(!/^\d{4}$/.test(yr)||+c[1]<1||+c[1]>12){ skip++; continue; }
+        k=yr+'-'+mo; vals=c.slice(2);
+      } else if(needMonConv){
+        var monMatch=c[0].match(/^([A-Za-z]{3})-(\d{2})$/);
+        if(!monMatch){ skip++; continue; }
+        var monStr=monMatch[1].charAt(0).toUpperCase()+monMatch[1].slice(1).toLowerCase();
+        var yrNum=+monMatch[2]; var yr4=String(yrNum<50?2000+yrNum:1900+yrNum);
+        k=yr4+'-'+(MON_MAP[monStr]||'00'); vals=c.slice(1);
+        if(vals.length<flds.length){ skip++; continue; }
+      } else {
+        k=c[0]; vals=c.slice(1);
+        var needDate=(dbi===0||dbi===2||dbi===4||dbi===5);
+        if(needDate&&!/^\d{4}-\d{2}-\d{2}$/.test(k)){ skip++; continue; }
+        if(!needDate&&!/^\d{4}-\d{2}$/.test(k)){ skip++; continue; }
+      }
+      var row=isAv?(DB[storeDbi][k]||{}):{}; 
+      if(colIdx){
+        /* 이름 기반 매핑 */
+        flds.forEach(function(f){
+          var idx=colIdx[f];
+          if(idx!==undefined&&idx>=0&&idx<vals.length) row[f]=Nv(vals[idx]);
+          else if(row[f]===undefined) row[f]=0;
+        });
+      } else {
+        /* 위치 기반 매핑 (fallback) */
+        if(vals.length<flds.length){ skip++; continue; }
+        flds.forEach(function(f,j){ row[f]=Nv(vals[j]); });
+      }
+      DB[storeDbi][k]=row; cnt++;
+    }
+    if(cnt===0){ toast('저장된 행이 없습니다. 유형 선택 또는 날짜형식을 확인하세요 (skip='+skip+')','ERR'); return; }
+    saveDB(storeDbi); document.getElementById('csvInput').value='';
+    document.getElementById('importMsg').innerHTML='<span style="color:var(--up);font-weight:600">&#10003; '+cnt+'건 완료'+(skip?' ('+skip+'건 건너뜀)':'')+'</span>';
+    setTimeout(function(){ var el=document.getElementById('importMsg'); if(el) el.textContent=''; },4000);
+    renderMgmt(); toast(cnt+'건 가져오기 완료','OK'); updBadge();
+  }catch(er){
+    toast('오류: '+er.message+' (line: '+er.lineNumber+')'  ,'ERR');
+    document.getElementById('importMsg').innerHTML='<span style="color:red">오류: '+er.message+'</span>';
+  }
+}
+
+/* ─── List uses data-attributes too ─── */
+function renderList(){
+  var dbi=Number(document.getElementById('listType').value);
+  var storeDbi=(dbi===4||dbi===5)?0:dbi;
+  var q=(document.getElementById('srch').value||'').trim();
+  var keys=Object.keys(DB[storeDbi]).sort().reverse();
+  if(q) keys=keys.filter(function(k){ return k.indexOf(q)>=0; });
+  document.getElementById('listSub').textContent=DB_NAMES[dbi]+' · 총 '+Object.keys(DB[storeDbi]).length+'건 / 표시 '+keys.length+'건';
+  var flds=DB_FIELDS[dbi];
+  document.getElementById('listHead').innerHTML='<tr><th style="text-align:left">날짜/년월</th>'+
+    flds.slice(0,6).map(function(f){ return '<th>'+f+'</th>'; }).join('')+'<th style="text-align:center">수정</th></tr>';
+  if(!keys.length){ document.getElementById('listBody').innerHTML='<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--t3)">데이터 없음</td></tr>'; return; }
+  document.getElementById('listBody').innerHTML=keys.map(function(k){
+    var e=DB[storeDbi][k]||{};
+    return '<tr><td>'+k+'</td>'+flds.slice(0,6).map(function(f){ return '<td>'+fmt(e[f])+'</td>'; }).join('')+
+      '<td style="text-align:center"><button class="btn bs bsm" data-action="edit" data-dbi="'+dbi+'" data-key="'+k+'" style="padding:3px 8px;font-size:11px">수정</button></td></tr>';
+  }).join('');
+}
+
+/* delegated handler for list edit button */
+document.addEventListener('click', function(ev){
+  var el=ev.target;
+  if(el.getAttribute('data-action')==='edit'){
+    var dbi=Number(el.getAttribute('data-dbi')),key=el.getAttribute('data-key');
+    gotoPage(1); gotoAdmin(dbi);
+    adminDates[dbi]=key;
+    document.getElementById('ed'+dbi).value=key;
+    loadAdminForm(dbi);
+    toast(key+' 수정모드','INF');
+  }
+});
+
+function clearData(){
+  var dbi=Number(document.getElementById('listType').value);
+  if(dbi===4||dbi===5){ toast('항공 데이터는 일일잠정에 포함됩니다. 일일잠정 유형을 선택 후 삭제하세요.','INF'); return; }
+  if(!confirm(DB_NAMES[dbi]+' 전체 삭제합니까?')) return;
+  DB[dbi]={}; saveDB(dbi); renderMgmt(); toast('삭제됨','INF');
+}
+
+
+function renderTrendPage() {
+  var role=sessionStorage.getItem('role')||'guest';
+  var dateEl=document.getElementById('trendViewDate');
+  if(!dateEl) return;
+  if(!dateEl.value) dateEl.value=yesterday;
+  var dt=dateEl.value;
+  var editBtn=document.getElementById('trendEditBtn');
+  var delBtn=document.getElementById('trendDelBtn');
+  if(editBtn) editBtn.style.display=role==='admin'?'':'none';
+  if(delBtn) delBtn.style.display=(role==='admin'&&DB[4][dt])?'':'none';
+  renderTrendView(dt);
+}
+
+function renderTrendView(dt) {
+  var rec=DB[4][dt]||{};
+  var viewEl=document.getElementById('trendViewContent');
+  var emptyEl=document.getElementById('trendEmpty');
+  if(!viewEl) return;
+  var hasAny=TREND_CATS.some(function(c){return rec[c.id]&&rec[c.id].trim();});
+  if(!hasAny){viewEl.innerHTML='';if(emptyEl)emptyEl.style.display='';return;}
+  if(emptyEl) emptyEl.style.display='none';
+  var prev=new Date(dt); prev.setDate(prev.getDate()-1);
+  var ps=prev.getFullYear()+'-'+String(prev.getMonth()+1).padStart(2,'0')+'-'+String(prev.getDate()).padStart(2,'0');
+  var per='<div style="margin-bottom:12px;padding:8px 14px;background:var(--plt);border-radius:8px;font-size:12px;color:#1e40af">'+
+    '&#128337; 수집기간: '+ps+' 06:00 ~ '+dt+' 05:59</div>';
+  viewEl.innerHTML=per+TREND_CATS.map(function(c){
+    var txt=rec[c.id]||''; if(!txt.trim()) return '';
+    var items=txt.split('\n').filter(function(l){return l.trim();});
+    return '<div style="background:var(--card);border-radius:var(--r);border:1px solid var(--bd);overflow:hidden">'+
+      '<div style="background:'+c.color+';color:#fff;padding:9px 14px;display:flex;align-items:center;gap:8px">'+
+      '<span style="font-size:18px">'+c.ico+'</span>'+
+      '<span style="font-weight:700;font-size:14px">'+c.label+'</span>'+
+      '<span style="font-size:11px;opacity:.8;margin-left:auto">'+c.desc+'</span></div>'+
+      '<div style="padding:10px 14px"><ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px">'+
+      items.map(function(l){return '<li style="font-size:14px;line-height:1.6;color:var(--t1)">'+l.trim()+'</li>';}).join('')+
+      '</ul></div></div>';
+  }).join('');
+}
+
+function toggleTrendEdit() {
+  var role=sessionStorage.getItem('role')||'guest';
+  if(role!=='admin'){toast('관리자만 편집할 수 있습니다','ERR');return;}
+  var viewDiv=document.getElementById('trendView');
+  var editDiv=document.getElementById('trendEdit');
+  var isEdit=editDiv&&editDiv.style.display!=='none';
+  if(viewDiv) viewDiv.style.display=isEdit?'':'none';
+  if(editDiv) editDiv.style.display=isEdit?'none':'';
+  if(!isEdit) buildTrendInputForm();
+}
+
+function buildTrendInputForm() {
+  var dt=document.getElementById('ed4')&&document.getElementById('ed4').value?document.getElementById('ed4').value:yesterday;
+  var lbl=document.getElementById('trendEditDateLabel');
+  if(lbl) lbl.textContent=dt+' 일일동향 입력';
+  var rec=DB[4][dt]||{};
+  var area=document.getElementById('trendInputArea');
+  if(!area) return;
+  var prev=new Date(dt); prev.setDate(prev.getDate()-1);
+  var ps=prev.getFullYear()+'-'+String(prev.getMonth()+1).padStart(2,'0')+'-'+String(prev.getDate()).padStart(2,'0');
+  area.innerHTML='<div style="font-size:12px;color:#1e40af;background:var(--plt);padding:7px 12px;border-radius:6px">'+
+    '&#128337; 수집기간: '+ps+' 06:00 ~ '+dt+' 05:59</div>'+
+    TREND_CATS.map(function(c){
+      var val=rec[c.id]||'';
+      return '<div><div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">'+
+        '<span style="background:'+c.color+';color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:700">'+
+        c.ico+' '+c.label+'</span>'+
+        '<span style="font-size:11px;color:var(--t3)">'+c.desc+'</span></div>'+
+        '<textarea id="ti_'+c.id+'" rows="4" class="ci" style="width:100%;font-size:13px;line-height:1.6;resize:vertical" '+
+        'placeholder="• 항목별 줄바꿈으로 입력 (줄당 1개 동향)">'+val+'</textarea></div>';
+    }).join('');
+}
+
+function saveTrend() {
+  var dt=document.getElementById('ed4').value||yesterday;
+  if(!dt){toast('날짜를 선택하세요','ERR');return;}
+  var rec={};
+  TREND_CATS.forEach(function(c){
+    var el=document.getElementById('ti_'+c.id);
+    if(el&&el.value.trim()) rec[c.id]=el.value.trim();
+  });
+  DB[4][dt]=rec; saveDB(4);
+  toast(dt+' 일일동향 저장 완료','OK');
+  var del4=document.getElementById('del4'); if(del4) del4.style.display='';
+  if(document.getElementById('pgMain')&&document.getElementById('pgMain').classList.contains('on')) renderMainPage();
+}
+
+function onTrendDateChange() {
+  var dt=document.getElementById('ed4').value;
+  var msgEl=document.getElementById('emsg4');
+  var delEl=document.getElementById('del4');
+  if(!dt){ if(msgEl) msgEl.textContent='날짜를 선택하세요'; return; }
+  var prev=new Date(dt); prev.setDate(prev.getDate()-1);
+  var ps=prev.getFullYear()+'-'+String(prev.getMonth()+1).padStart(2,'0')+'-'+String(prev.getDate()).padStart(2,'0');
+  if(msgEl) msgEl.textContent='수집기간: '+ps+' 06:00 ~ '+dt+' 05:59';
+  if(delEl) delEl.style.display=DB[4][dt]?'':'none';
+  buildTrendInputForm();
+}
+
+function resetTrendForm() {
+  TREND_CATS.forEach(function(c){ var el=document.getElementById('ti_'+c.id); if(el) el.value=''; });
+}
+
+function deleteTrendEntry(dt) {
+  if(!dt||!DB[4][dt]){toast('삭제할 동향이 없습니다','ERR');return;}
+  if(!confirm(dt+' 동향을 삭제하시겠습니까?')) return;
+  delete DB[4][dt]; saveDB(4);
+  toast('삭제 완료','INF'); renderTrendPage();
+}
+
+/* ═══ INIT */
+initGate();
+loadAllDB();
+updBadge();
+/* ── Supabase 자동 연결 ──
+   HTML에 실제 URL/Key가 내장되어 있으면 자동 연결 (admin/guest 모두)
+   localStorage 우선, 없으면 HTML 내장값 사용 */
+setTimeout(async function(){
+  try{
+    var u = (localStorage.getItem('sb_url')||'').trim() || SB_URL;
+    var k = (localStorage.getItem('sb_key')||'').trim() || SB_KEY;
+    if(u && u.indexOf('YOUR_PROJECT')<0 && k && k!=='YOUR_ANON_KEY'){
+      SB_URL=u; SB_KEY=k;
+      initSupabase();
+      if(sbReady){
+        /* 설정 UI 값 채우기 (admin 탭용) */
+        var urlEl=document.getElementById('sb-url-input');
+        var keyEl=document.getElementById('sb-key-input');
+        var stEl=document.getElementById('sb-status');
+        if(urlEl) urlEl.value=u;
+        if(keyEl) keyEl.value=k;
+        if(stEl){stEl.textContent='● 클라우드 연결됨';stEl.style.color='#059669';}
+        await syncFromSupabase();
+      }
+    }
+  }catch(e){ console.error('Supabase 자동연결 오류:',e); }
+}, 600);
+/* 기준일: 전일(어제) 날짜로 초기화 — 통계는 전날 기준 */
+var initRef=yesterday;
+TS.forEach(function(ts){
+  ts.refDate=yesterday; ts.compYr=+yesterday.slice(0,4)-1;
+  ts.monthYr=yesterday.slice(0,4); /* 4자리 연도만 저장 */
+  ts.rangeS=yesterdayYM+'-01'; ts.rangeE=yesterday;
+});
+refDate=yesterday; compYr=TS[0].compYr; monthYr=TS[0].monthYr;
+rangeS=TS[0].rangeS; rangeE=TS[0].rangeE;
+[0,1,2,3].forEach(function(ai){
+  adminDates[ai]=ai%2===0?today:todayYM;
+  document.getElementById('ed'+ai).value=adminDates[ai];
+});
+/* Start on main home page */
+gotoMain();
+
+</script>
+</body>
+</html>
