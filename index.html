@@ -232,7 +232,7 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
 .mn .mn-sub{font-size:9px;color:rgba(255,255,255,.45);margin-left:2px;font-weight:400}
 
 /* ═══ MAIN PAGE ═══ */
-.main-pg{flex:1;overflow-y:auto;display:none;flex-direction:column}
+.main-pg{flex:1;overflow-y:auto;display:none;flex-direction:column;-webkit-overflow-scrolling:touch}
 .main-pg.on{display:flex}
 
 /* ═══ HERO SEASONAL ═══ */
@@ -248,7 +248,7 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
 
 /* ═══ CATEGORY GRID ═══ */
-.main-cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:0;background:var(--card);border-bottom:1px solid var(--bd);flex-shrink:0}
+.main-cat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0;background:var(--card);border-bottom:1px solid var(--bd);flex-shrink:0}
 @media(max-width:800px){.main-cat-grid{grid-template-columns:repeat(3,1fr)}}
 .cat-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 6px;cursor:pointer;border-right:1px solid rgba(255,255,255,.25);transition:.15s}
 .cat-item:nth-child(1){background:#2e6da4;color:#fff}
@@ -257,6 +257,7 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
 .cat-item:nth-child(4){background:#5b6abf;color:#fff}
 .cat-item:nth-child(5){background:#c06c1a;color:#fff}
 .cat-item:nth-child(6){background:#367a6e;color:#fff}
+.cat-item:nth-child(7){background:#1e5fa8;color:#fff}
 .cat-item:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.18)}
 .cat-item:last-child{border-right:none}
 .cat-item:hover{background:var(--c2)}
@@ -266,13 +267,13 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
 .cat-item.ci-on{filter:brightness(1.2);outline:2px solid #fff}
 
 /* ═══ MAIN BODY GRID ═══ */
-.main-body-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 16px;flex:1;overflow-y:auto;align-content:start}
+.main-body-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 16px;align-content:start}
 @media(max-width:750px){.main-body-grid{grid-template-columns:1fr}}
 .main-panel{background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column}
 .mp-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--bd);border-left:4px solid var(--mp-color,var(--p));font-size:12px;font-weight:700;color:var(--t1)}
 .mp-kpi{display:flex;gap:10px;padding:10px 14px 8px;flex-wrap:wrap;border-bottom:1px solid var(--bd)}
 /* new side-by-side layout */
-.mp-body{display:flex;gap:0;min-height:165px}
+.mp-body{display:flex;gap:0;min-height:200px}
 .mp-kpi-big{width:210px;flex-shrink:0;padding:14px 16px;display:flex;flex-direction:column;gap:8px;border-right:1px solid var(--bd);position:relative;overflow:hidden}
 .mp-kpi-big .kpi-illust{position:absolute;right:8px;top:8px;transform:none;opacity:1;font-size:28px;line-height:1;pointer-events:none;user-select:none;z-index:0}
 .mp-kpi-big .kfeat{display:flex;flex-direction:column}
@@ -286,7 +287,7 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
 .mp-kpi-big .ksub{flex:1;min-width:60px}
 .mp-kpi-big .ksub-lbl{font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase}
 .mp-kpi-big .ksub-val{font-size:16px;font-weight:800;color:var(--t1)}
-.mp-chart-side{flex:1;min-width:0;padding:6px 8px 0;position:relative}
+.mp-chart-side{flex:1;min-width:0;padding:6px 8px 4px;position:relative;min-height:180px}
 .mp-kpi-item{flex:1;min-width:80px}
 .mp-kpi-lbl{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
 .mp-kpi-val{font-size:20px;font-weight:800;color:var(--t1);line-height:1}
@@ -294,7 +295,7 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
 .mp-kpi-chg{font-size:10px;font-weight:700;margin-top:2px}
 .mp-kpi-chg.up{color:var(--up)}.mp-kpi-chg.dn{color:var(--dn)}.mp-kpi-chg.nc{color:var(--nc)}
 .mp-chart-wrap{height:155px;padding:4px 8px 4px;position:relative}
-.mp-chart-side canvas{position:absolute;inset:6px 8px 0;width:calc(100% - 16px)!important;height:calc(100% - 6px)!important}
+.mp-chart-side canvas{position:absolute;inset:6px 8px 24px;width:calc(100% - 16px)!important;height:calc(100% - 30px)!important}
 .mp-period{font-size:12px;color:var(--t3);padding:4px 14px 10px;text-align:right}
 
 /* OLD HERO PLACEHOLDER */
@@ -449,6 +450,15 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
     </div>
   </div>
 
+  <!-- 최근 일일관광동향 요약 -->
+  <div id="trendSummaryCard" style="margin:0 12px 12px;background:var(--card);border-radius:var(--r);border:1px solid var(--bd);overflow:hidden">
+    <div style="background:#1e5fa8;color:#fff;padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-weight:700;font-size:14px">&#128240; 최근 일일관광동향</span>
+      <button onclick="gotoPage(3)" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:var(--fn)">전체보기 →</button>
+    </div>
+    <div id="trendSummaryBody" style="padding:10px 14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px"></div>
+    <div style="padding:4px 14px 8px;font-size:11px;color:var(--t3)" id="trendSummaryDate"></div>
+  </div>
   <div class="main-footer" id="mainFooter"></div>
 </div>
 
@@ -462,6 +472,7 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
       <button class="stb"    id="sb3" onclick="gotoStat(3)">&#128674; 크루즈 월별통계</button>
       <button class="stb"    id="sb4" onclick="gotoStat(4)">&#9992;&#65039; 국내선 항공</button>
       <button class="stb"    id="sb5" onclick="gotoStat(5)">&#127760; 국제선 항공</button>
+      <button class="stb"    id="sb6" onclick="gotoPage(3)">&#128240; 일일동향</button>
     </div>
   </div>
   <div class="pg-body">
@@ -470,12 +481,38 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
     <div id="sc4" style="display:none"></div><div id="sc5" style="display:none"></div>
   </div>
 </div>
+<div class="pg" id="pg3">
+  <div class="stbar">
+    <div class="strow">
+      <button class="stb" onclick="gotoStatMain(0)">&#128101; 관광객 잠정(일일)</button>
+      <button class="stb" onclick="gotoStatMain(1)">&#9989; 관광객 확정(월별)</button>
+      <button class="stb" onclick="gotoStatMain(2)">&#128674; 크루즈 일일통계</button>
+      <button class="stb" onclick="gotoStatMain(3)">&#128674; 크루즈 월별통계</button>
+      <button class="stb" onclick="gotoStatMain(4)">&#9992;&#65039; 국내선 항공</button>
+      <button class="stb" onclick="gotoStatMain(5)">&#127760; 국제선 항공</button>
+      <button class="stb on">&#128240; 일일동향</button>
+    </div>
+    <div class="strow" id="trendDateRow" style="padding:6px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--bd)">
+      <input type="date" id="trendViewDate" class="ci" style="font-size:12px;width:140px" onchange="renderTrendPage()">
+      <span id="trendPeriodLabel" style="font-size:12px;color:var(--t3)"></span>
+    </div>
+  </div>
+  <div class="pg-body" style="padding:16px">
+    <div id="trendViewContent" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div id="trendEmpty" style="text-align:center;padding:60px 20px;color:var(--t3)">
+      <div style="font-size:48px">&#128240;</div>
+      <div style="font-size:15px;margin-top:12px;font-weight:600">해당 날짜의 동향이 없습니다</div>
+      <div style="font-size:13px;margin-top:6px">관리자가 관리자 탭에서 동향을 입력하면 여기에 표시됩니다</div>
+    </div>
+  </div>
+</div>
 <div class="pg" id="pg1">
   <div class="admin-tabs">
     <button class="atb on" id="ab0" onclick="gotoAdmin(0)">&#128197; 일일 잠정 입력</button>
     <button class="atb"    id="ab1" onclick="gotoAdmin(1)">&#128203; 월별 확정 입력 (관광객)</button>
     <button class="atb"    id="ab2" onclick="gotoAdmin(2)">&#128674; 크루즈 일일 입력</button>
     <button class="atb" id="ab3" onclick="gotoAdmin(3)" style="display:none">&#128674; 크루즈 월별 입력</button>
+    <button class="atb" id="ab4" onclick="gotoAdmin(4)">&#128240; 일일동향 입력</button>
   </div>
   <div class="pg-body">
     <div id="ac0" >
@@ -704,6 +741,34 @@ body.winter  { --s-grad1:#1251a3;--s-grad2:#4a90d9;--s-hero1:#0a1628;--s-hero2:#
         </div>
       </div>
     </div>
+
+    <div id="ac4" style="display:none">
+      <div class="card">
+        <div class="ch">
+          <div class="chl"><div class="cico" style="background:#dbeafe">&#128240;</div>
+            <div><div class="ctit">일일관광동향 입력</div><div class="csub">국내외 관광 관련 주요 동향 일일 현황 입력</div></div>
+          </div>
+          <div class="rowf"><span class="badge-crz">일일동향</span><span id="es4"></span></div>
+        </div>
+        <div class="cb">
+          <div class="fgrid" style="margin-bottom:12px">
+            <div class="fld" style="grid-column:1/2">
+              <label>기준 날짜</label>
+              <input type="date" id="ed4" onchange="onTrendDateChange()">
+            </div>
+            <div style="grid-column:2/-1;display:flex;align-items:flex-end">
+              <span id="emsg4" style="font-size:12px;color:var(--t3)">날짜를 선택하세요</span>
+            </div>
+          </div>
+          <div id="trendInputArea" style="display:flex;flex-direction:column;gap:14px"></div>
+          <div class="rowf" style="margin-top:14px">
+            <button class="btn bp blg" onclick="saveTrend()">&#128190; 저장</button>
+            <button class="btn bs" onclick="resetTrendForm()">&#8635; 초기화</button>
+            <button class="btn bd_ bsm" id="del4" style="display:none" onclick="deleteTrendEntry(document.getElementById('ed4').value)">삭제</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <div class="pg" id="pg2">
@@ -870,7 +935,8 @@ function applyRole(role) {
   /* 관리자 전용 탭: nb1(관리자), nb2(데이터관리) */
   var adminOnly = [document.getElementById('nb1'), document.getElementById('nb2')];
   adminOnly.forEach(function(el) { if (el) el.style.display = role === 'admin' ? '' : 'none'; });
-  /* guest이면 무조건 홈 화면 */
+  /* nb3(일일동향)은 admin/guest 모두 표시 */
+  var nb3=document.getElementById('nb3'); if(nb3) nb3.style.display='';
   if(role !== 'admin') gotoMain();
   else if(document.getElementById('pgMain')&&document.getElementById('pgMain').classList.contains('on'))
     setTimeout(renderMainPage, 100);
@@ -1089,8 +1155,8 @@ function initGate() {
 }
 
 /* ═══ DATA STORES */
-const SKEYS = ['jeju_v3','jeju_mt_v1','jeju_cd_v1','jeju_cm_v1'];
-var DB = [{},{},{},{}];
+const SKEYS = ['jeju_v3','jeju_mt_v1','jeju_cd_v1','jeju_cm_v1','jeju_trend_v1'];
+var DB = [{},{},{},{},{}]; /* DB[4] = 일일관광동향 */
 
 /* ── Supabase 설정 (데이터관리 탭에서 입력) ── */
 var SB_URL = 'https://ziotcoutwrxyhmklukvk.supabase.co';
@@ -1184,7 +1250,8 @@ async function saveDB(i) {
 function updBadge() {
   document.getElementById('dbbg').textContent =
     '잠정:'+Object.keys(DB[0]).length+'일 확정:'+Object.keys(DB[1]).length+
-    '월 크루즈:'+Object.keys(DB[2]).length+'일/'+Object.keys(DB[3]).length+'월';
+    '월 크루즈:'+Object.keys(DB[2]).length+'일/'+Object.keys(DB[3]).length+'월'+
+    ' 동향:'+Object.keys(DB[4]).length+'건';
 }
 
 /* ═══ UTILS */
@@ -1235,9 +1302,10 @@ function toast(msg,type) {
 var curPage=0, curStat=0, curAdmin=0;
 function gotoMain() {
   document.getElementById('pgMain').classList.add('on');
-  ['pg0','pg1','pg2'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.remove('on'); });
+  ['pg0','pg1','pg2','pg3'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.remove('on'); });
   document.getElementById('nbMain').classList.add('on');
   ['nb0','nb1','nb2'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.remove('on'); });
+  setNsActive('nsMain');
   renderMainPage();
 }
 function gotoPage(i) {
@@ -1246,14 +1314,21 @@ function gotoPage(i) {
   curPage=i;
   var pm=document.getElementById('pgMain'); if(pm) pm.classList.remove('on');
   var nbm=document.getElementById('nbMain'); if(nbm) nbm.classList.remove('on');
-  [0,1,2].forEach(function(j){
+  [0,1,2,3].forEach(function(j){
     var nb=document.getElementById('nb'+j); if(nb) nb.classList.toggle('on',j===i);
     var pg=document.getElementById('pg'+j); if(pg) pg.classList.toggle('on',j===i);
   });
   if(i===2) renderMgmt();
+  if(i===3){ renderTrendPage(); [0,1,2,3,4,5].forEach(function(j){var s=document.getElementById('sb'+j);if(s)s.classList.remove('on');}); var s6=document.getElementById('sb6');if(s6)s6.classList.add('on'); }
+}
+function setNsActive(id) {
+  ['nsMain','ns0','ns1','ns2','ns3','ns4','ns5','ns6'].forEach(function(nid){
+    var el=document.getElementById(nid); if(el) el.classList.toggle('on',nid===id);
+  });
 }
 function gotoStatMain(si) {
   gotoPage(0);
+  setNsActive('ns'+si);
   setTimeout(function(){ gotoStat(si); }, 60);
 }
 function gotoStat(i) {
@@ -1262,14 +1337,16 @@ function gotoStat(i) {
     document.getElementById('sb'+j).classList.toggle('on',j===i);
     document.getElementById('sc'+j).style.display=j===i?'block':'none';
   });
+  var sb6=document.getElementById('sb6'); if(sb6) sb6.classList.remove('on');
   setTimeout(function(){ renderStat(i); },40);
 }
 function gotoAdmin(i) {
   curAdmin=i;
-  [0,1,2,3].forEach(function(j){
-    document.getElementById('ab'+j).classList.toggle('on',j===i);
-    document.getElementById('ac'+j).style.display=j===i?'block':'none';
+  [0,1,2,3,4].forEach(function(j){
+    var ab=document.getElementById('ab'+j); if(ab) ab.classList.toggle('on',j===i);
+    var ac=document.getElementById('ac'+j); if(ac) ac.style.display=j===i?'block':'none';
   });
+  if(i===4) { var d=document.getElementById('ed4'); if(d&&!d.value) d.value=yesterday; onTrendDateChange(); }
 }
 
 /* ═══ PER-TAB STATE ═══ */
@@ -2072,6 +2149,17 @@ function drawMiniChart(canvasId, labels, data, color) {
   });
 }
 
+/* ═══ 일일관광동향 ═══════════════════════════════════════════ */
+var TREND_CATS = [
+  {id:'policy',   label:'관광정책/마케팅', color:'#1e5fa8', ico:'&#127758;', desc:'국내외 정부·지자체·국제관광기구·단체 동향'},
+  {id:'trend',    label:'관광동향',       color:'#059669', ico:'&#127939;', desc:'국내·인바운드·해외관광 업계 중심 동향'},
+  {id:'aviation', label:'항공동향',       color:'#7c3aed', ico:'&#9992;&#65039;', desc:'스케줄 변경·신규취항·전세기·유류할증료 등'},
+  {id:'cruise',   label:'크루즈동향',     color:'#0284c7', ico:'&#128674;', desc:'아시아·카리브·지중해 등 글로벌 크루즈 시장'},
+  {id:'research', label:'연구/보고서',    color:'#b45309', ico:'&#128196;', desc:'국내외 관광 연구보고서'},
+  {id:'media',    label:'언론보도',       color:'#dc2626', ico:'&#128333;', desc:'주요 관광 관련 언론 보도'},
+  {id:'economy',  label:'경제동향',       color:'#374151', ico:'&#128200;', desc:'관광 관련 경제지표 및 거시경제 동향'}
+];
+
 function renderMainPage() {
   var s=getSeason();
   /* Use today if data exists, else fallback to latest available */
@@ -2080,6 +2168,30 @@ function renderMainPage() {
   var refTd=(DB[0][today]&&Object.keys(DB[0][today]).length)?today:latest;
   var footer=document.getElementById('mainFooter');
   if(footer) footer.innerHTML='제주특별자치도 관광통계 관리 시스템 | DB기준: '+refTd+' | 오늘: '+today;
+  /* 최근 일일관광동향 요약 */
+  (function(){
+    var tKeys=Object.keys(DB[4]).sort().reverse();
+    var card=document.getElementById('trendSummaryCard');
+    var body=document.getElementById('trendSummaryBody');
+    var dateEl=document.getElementById('trendSummaryDate');
+    if(!tKeys.length){
+      if(card) card.style.display='';
+      if(body) body.innerHTML='<div style="padding:20px;text-align:center;color:var(--t3);font-size:13px">&#128240; 아직 입력된 관광동향이 없습니다<br><span style="font-size:11px">관리자 탭에서 일일동향을 입력하세요</span></div>';
+      if(dateEl) dateEl.textContent='';
+      return;
+    }
+    if(card) card.style.display='';
+    var lt=tKeys[0]; var rec=DB[4][lt]||{};
+    if(dateEl) dateEl.textContent='기준일: '+lt;
+    if(body) body.innerHTML=TREND_CATS.map(function(c){
+      var txt=rec[c.id]||''; if(!txt.trim()) return '';
+      var lines=txt.split('\n').filter(function(l){return l.trim();});
+      return '<div style="padding:7px 10px;background:var(--c2);border-radius:6px;border-left:3px solid '+c.color+'">'+
+        '<div style="font-size:11px;font-weight:700;color:'+c.color+';margin-bottom:3px">'+c.ico+' '+c.label+'</div>'+
+        '<div style="font-size:12px;color:var(--t1);line-height:1.5">'+lines[0]+
+        (lines.length>1?' <span style="color:var(--t3)">외 '+(lines.length-1)+'건</span>':'')+'</div></div>';
+    }).join('');
+  })();
   /* seasonal bg removed - using CSS class only */
   ['spring','summer','autumn','winter'].forEach(function(k){ document.body.classList.remove(k); });
   var skey=Object.keys(SEASONS).find(function(k){ return SEASONS[k]===s; })||'winter'; document.body.classList.add(skey);
@@ -2104,6 +2216,7 @@ function renderMainPage() {
     {ico:'&#128674;',title:'크루즈 월별',sub:'합산',color:'#f0fdf4',si:3},
     {ico:'&#9992;&#65039;',title:'국내선',sub:'항공',color:'#ede9fe',si:4},
     {ico:'&#127760;',title:'국제선',sub:'항공',color:'#cffafe',si:5},
+    {ico:'&#128240;',title:'일일동향',sub:'관광동향',color:'#eff6ff',si:'trend'},
   ];
   var mg=document.getElementById('statMenuGrid');
   if(mg){
@@ -2114,7 +2227,11 @@ function renderMainPage() {
       '</div>';
     }).join('');
     mg.querySelectorAll('.cat-item').forEach(function(el){
-      el.addEventListener('click',function(){ gotoStatMain(+this.getAttribute('data-si')); });
+      el.addEventListener('click',function(){
+        var si=this.getAttribute('data-si');
+        if(si==='trend') gotoPage(3);
+        else gotoStatMain(+si);
+      });
     });
   }
 
@@ -2222,9 +2339,12 @@ function renderMainPage() {
           '</div>'
       );
     var data7=dates7.map(function(ds){ return DB[2][ds]?Nv(DB[2][ds]['c_total_pax']):null; });
-    drawMiniChart('mChart2',labels7,data7,'#0284c7');
+    /* 전년동기 14일 */
+    var pyDates7c=dates7.map(function(ds){ return String(+ds.slice(0,4)-1)+ds.slice(4); });
+    var pyData7c=pyDates7c.map(function(ds){ return DB[2][ds]?Nv(DB[2][ds]['c_total_pax']):null; });
+    drawMiniChartDual('mChart2',labels7,data7,pyData7c,'#0284c7','#7dd3fc');
     var per=document.getElementById('mPeriod2');
-    if(per) per.textContent=dates7[0]+' ~ '+dates7[13]+' 14일 추이';
+    if(per) per.textContent='당해(실선) / 전년동기(점선) 14일 추이';
   })();
 
   /* ━━ PANEL 3: 항공(국내+국제) ━━ */
@@ -2615,6 +2735,116 @@ function clearData(){
   if(dbi===4||dbi===5){ toast('항공 데이터는 일일잠정에 포함됩니다. 일일잠정 유형을 선택 후 삭제하세요.','INF'); return; }
   if(!confirm(DB_NAMES[dbi]+' 전체 삭제합니까?')) return;
   DB[dbi]={}; saveDB(dbi); renderMgmt(); toast('삭제됨','INF');
+}
+
+
+function renderTrendPage() {
+  var role=sessionStorage.getItem('role')||'guest';
+  var dateEl=document.getElementById('trendViewDate');
+  if(!dateEl) return;
+  if(!dateEl.value) dateEl.value=yesterday;
+  var dt=dateEl.value;
+  var editBtn=document.getElementById('trendEditBtn');
+  var delBtn=document.getElementById('trendDelBtn');
+  if(editBtn) editBtn.style.display=role==='admin'?'':'none';
+  if(delBtn) delBtn.style.display=(role==='admin'&&DB[4][dt])?'':'none';
+  renderTrendView(dt);
+}
+
+function renderTrendView(dt) {
+  var rec=DB[4][dt]||{};
+  var viewEl=document.getElementById('trendViewContent');
+  var emptyEl=document.getElementById('trendEmpty');
+  if(!viewEl) return;
+  var hasAny=TREND_CATS.some(function(c){return rec[c.id]&&rec[c.id].trim();});
+  if(!hasAny){viewEl.innerHTML='';if(emptyEl)emptyEl.style.display='';return;}
+  if(emptyEl) emptyEl.style.display='none';
+  var prev=new Date(dt); prev.setDate(prev.getDate()-1);
+  var ps=prev.getFullYear()+'-'+String(prev.getMonth()+1).padStart(2,'0')+'-'+String(prev.getDate()).padStart(2,'0');
+  var per='<div style="margin-bottom:12px;padding:8px 14px;background:var(--plt);border-radius:8px;font-size:12px;color:#1e40af">'+
+    '&#128337; 수집기간: '+ps+' 06:00 ~ '+dt+' 05:59</div>';
+  viewEl.innerHTML=per+TREND_CATS.map(function(c){
+    var txt=rec[c.id]||''; if(!txt.trim()) return '';
+    var items=txt.split('\n').filter(function(l){return l.trim();});
+    return '<div style="background:var(--card);border-radius:var(--r);border:1px solid var(--bd);overflow:hidden">'+
+      '<div style="background:'+c.color+';color:#fff;padding:9px 14px;display:flex;align-items:center;gap:8px">'+
+      '<span style="font-size:18px">'+c.ico+'</span>'+
+      '<span style="font-weight:700;font-size:14px">'+c.label+'</span>'+
+      '<span style="font-size:11px;opacity:.8;margin-left:auto">'+c.desc+'</span></div>'+
+      '<div style="padding:10px 14px"><ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px">'+
+      items.map(function(l){return '<li style="font-size:14px;line-height:1.6;color:var(--t1)">'+l.trim()+'</li>';}).join('')+
+      '</ul></div></div>';
+  }).join('');
+}
+
+function toggleTrendEdit() {
+  var role=sessionStorage.getItem('role')||'guest';
+  if(role!=='admin'){toast('관리자만 편집할 수 있습니다','ERR');return;}
+  var viewDiv=document.getElementById('trendView');
+  var editDiv=document.getElementById('trendEdit');
+  var isEdit=editDiv&&editDiv.style.display!=='none';
+  if(viewDiv) viewDiv.style.display=isEdit?'':'none';
+  if(editDiv) editDiv.style.display=isEdit?'none':'';
+  if(!isEdit) buildTrendInputForm();
+}
+
+function buildTrendInputForm() {
+  var dt=document.getElementById('ed4')&&document.getElementById('ed4').value?document.getElementById('ed4').value:yesterday;
+  var lbl=document.getElementById('trendEditDateLabel');
+  if(lbl) lbl.textContent=dt+' 일일동향 입력';
+  var rec=DB[4][dt]||{};
+  var area=document.getElementById('trendInputArea');
+  if(!area) return;
+  var prev=new Date(dt); prev.setDate(prev.getDate()-1);
+  var ps=prev.getFullYear()+'-'+String(prev.getMonth()+1).padStart(2,'0')+'-'+String(prev.getDate()).padStart(2,'0');
+  area.innerHTML='<div style="font-size:12px;color:#1e40af;background:var(--plt);padding:7px 12px;border-radius:6px">'+
+    '&#128337; 수집기간: '+ps+' 06:00 ~ '+dt+' 05:59</div>'+
+    TREND_CATS.map(function(c){
+      var val=rec[c.id]||'';
+      return '<div><div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">'+
+        '<span style="background:'+c.color+';color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:700">'+
+        c.ico+' '+c.label+'</span>'+
+        '<span style="font-size:11px;color:var(--t3)">'+c.desc+'</span></div>'+
+        '<textarea id="ti_'+c.id+'" rows="4" class="ci" style="width:100%;font-size:13px;line-height:1.6;resize:vertical" '+
+        'placeholder="• 항목별 줄바꿈으로 입력 (줄당 1개 동향)">'+val+'</textarea></div>';
+    }).join('');
+}
+
+function saveTrend() {
+  var dt=document.getElementById('ed4').value||yesterday;
+  if(!dt){toast('날짜를 선택하세요','ERR');return;}
+  var rec={};
+  TREND_CATS.forEach(function(c){
+    var el=document.getElementById('ti_'+c.id);
+    if(el&&el.value.trim()) rec[c.id]=el.value.trim();
+  });
+  DB[4][dt]=rec; saveDB(4);
+  toast(dt+' 일일동향 저장 완료','OK');
+  var del4=document.getElementById('del4'); if(del4) del4.style.display='';
+  if(document.getElementById('pgMain')&&document.getElementById('pgMain').classList.contains('on')) renderMainPage();
+}
+
+function onTrendDateChange() {
+  var dt=document.getElementById('ed4').value;
+  var msgEl=document.getElementById('emsg4');
+  var delEl=document.getElementById('del4');
+  if(!dt){ if(msgEl) msgEl.textContent='날짜를 선택하세요'; return; }
+  var prev=new Date(dt); prev.setDate(prev.getDate()-1);
+  var ps=prev.getFullYear()+'-'+String(prev.getMonth()+1).padStart(2,'0')+'-'+String(prev.getDate()).padStart(2,'0');
+  if(msgEl) msgEl.textContent='수집기간: '+ps+' 06:00 ~ '+dt+' 05:59';
+  if(delEl) delEl.style.display=DB[4][dt]?'':'none';
+  buildTrendInputForm();
+}
+
+function resetTrendForm() {
+  TREND_CATS.forEach(function(c){ var el=document.getElementById('ti_'+c.id); if(el) el.value=''; });
+}
+
+function deleteTrendEntry(dt) {
+  if(!dt||!DB[4][dt]){toast('삭제할 동향이 없습니다','ERR');return;}
+  if(!confirm(dt+' 동향을 삭제하시겠습니까?')) return;
+  delete DB[4][dt]; saveDB(4);
+  toast('삭제 완료','INF'); renderTrendPage();
 }
 
 /* ═══ INIT */
